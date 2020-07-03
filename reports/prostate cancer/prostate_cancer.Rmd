@@ -1,0 +1,367 @@
+---
+title: "GM-UAW Cohort Study"
+subtitle: "Prostate cancer incidence"
+date: \today
+# fontsize: 10pt
+output:
+  beamer_presentation:
+    # latex_engine: lualatex
+    includes:
+      in_header: "~/HeadRs/BeamerHead.sty"
+  keep_tex: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(echo = F,
+											warning = F,
+											message = F,
+											cache = F,
+											fig.align = "center",
+											fig.pos = "H",
+											results = "asis")
+
+library(here); library(tidyverse); library(data.table);
+library(lubridate); library(xtable)
+
+source("~/HeadRs/00-my-theme.R")
+incidence.key <- fread(here::here("cancer incidence", "cancer-key-expanded.tsv"))
+
+```
+
+# Four analyses
+
+\linespread{1.25}
+
+1. Men still alive in 1973
+1. Men still alive in 1985, excluding the 134 men who had prostate cancer before 1985
+1. Men still alive in 1985, excluding the 134, weighted by probability of not dying of natural causes
+1. Men still alive in 1985, excluding the 134, weighted by stabilized inverse probability with truncation at the 99^th^ percentile of weights ($sw_i$ = 330)
+
+Follow-up ends on the date of death, prostate cancer incidence, LTFU (outcome-free at age 108.39 years), or 2015-12-31, whichever comes first.
+
+All analyses restricted to plants 1 and 2
+
+Summary of population charactersitcs in the slides to follow.
+
+#
+
+\renewcommand\arraystretch{1.1}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+tab1.1 <- readRDS(file = paste0(
+					here::here('left truncation/resources/'),
+					"popchar1.tab1.rds"
+				))
+
+n.which <- which(grepl("\\$n", tab1.1[,"spread.which"]))
+med.which <- which(grepl("median", tab1.1[,"spread.which"]) &
+									 	!is.na(tab1.1[,3]))
+
+tab1.1[med.which, 2] <- paste0("$(", gsub("\\$", "", tab1.1[med.which, 2]),
+															",\\ ",
+															gsub("\\$", "", tab1.1[med.which, 3]),
+															")$")
+
+tab1.1 <- cbind(rownames(tab1.1), tab1.1[,1:2])
+
+colnames(tab1.1)[1] <- "\\multicolumn{3}{l}{Men still alive in 1973}\\\\%"
+
+print.xtable(xtable(tab1.1[-c(6:8, 12:16),],
+										align = "llrl"))
+
+```
+\end{adjustbox}
+\end{table}
+
+#
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+tab1.2 <- readRDS(file = paste0(
+					here::here('left truncation/resources/'),
+					"popchar2.tab1.rds"
+				))
+
+n.which <- which(grepl("\\$n", tab1.2[,"spread.which"]))
+med.which <- which(grepl("median", tab1.2[,"spread.which"]) &
+									 	!is.na(tab1.2[,3]))
+
+tab1.2[med.which, 2] <- paste0("$(", gsub("\\$", "", tab1.2[med.which, 2]),
+															",\\ ",
+															gsub("\\$", "", tab1.2[med.which, 3]),
+															")$")
+
+tab1.2 <- cbind(rownames(tab1.2), tab1.2[,1:2])
+
+colnames(tab1.2)[1] <- "\\multicolumn{3}{l}{Men still alive in 1985}\\\\%"
+
+print.xtable(xtable(tab1.2[-c(6:8, 12:16),],
+										align = "llrl"))
+
+```
+\end{adjustbox}
+\end{table}
+
+#
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+tab1.3 <- readRDS(file = paste0(
+					here::here('left truncation/resources/'),
+					"popchar3.tab1.rds"
+				))
+
+n.which <- which(grepl("\\$n", tab1.3[,"spread.which"]))
+med.which <- which(grepl("median", tab1.3[,"spread.which"]) &
+									 	!is.na(tab1.3[,3]))
+
+tab1.3[med.which, 2] <- paste0("$(", gsub("\\$", "", tab1.3[med.which, 2]),
+															",\\ ",
+															gsub("\\$", "", tab1.3[med.which, 3]),
+															")$")
+
+tab1.3 <- cbind(rownames(tab1.3), tab1.3[,1:2])
+
+colnames(tab1.3)[1] <- "\\multicolumn{3}{l}{Men still alive in 1985}\\\\%"
+
+print.xtable(xtable(tab1.3[-c(6:8, 13:16),],
+										align = "llrl"))
+
+```
+\end{adjustbox}
+\end{table}
+
+# Stabilized weight
+
+\linespread{1.25}
+
+$$sw_i = \frac{1 - \bar p}{1 - \hat p_i}$$
+where $\hat p_i$ is the $i$^th^ individual's predicted probability of surviving to year 1985, and $\bar p$ is the overall survival proportion i.e. $\frac{1}{n}\sum^n_i\hat p_i$.
+
+# Cox PH Models
+
+\linespread{1.25}
+
+- Cumulative exposure to straight, soluble, and synthetic MWFs (lagged 20 years)
+- Splined calendar year
+- Splined year of hire
+- Race
+- Plant
+- Risk sets indexed by age
+
+#
+
+## 1. Men still alive in 1973 \vspace{2.5pt}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+coef1.tab <- readRDS(here::here('reports/left truncation/prostate cancer/resources/', "pr_mod1.tab.rds"))
+
+colnames(coef1.tab)[5] <- "(95\\% CI)"
+coef1.tab <- coef1.tab[,-c("events", "p")]
+coef1.tab[,"n"] <- as.character(round(unlist(coef1.tab[,"n"]), 0))
+coef1.tab[,"Covariate"] <- gsub(" 5$", "", unlist(coef1.tab[,"Covariate"]))
+
+print.xtable(xtable(coef1.tab))
+
+```
+\end{adjustbox}
+\end{table}
+
+#
+
+## 2. Men still alive in 1985 \vspace{2.5pt}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+coef2.tab <- readRDS(here::here('reports/left truncation/prostate cancer/resources/', "pr_mod2.tab.rds"))
+
+colnames(coef2.tab)[5] <- "(95\\% CI)"
+coef2.tab <- coef2.tab[,-c("events", "p")]
+coef2.tab[,"n"] <- as.character(round(unlist(coef2.tab[,"n"]), 0))
+coef2.tab[,"Covariate"] <- gsub(" 5$", "", unlist(coef2.tab[,"Covariate"]))
+
+print.xtable(xtable(coef2.tab))
+
+```
+\end{adjustbox}
+\end{table}
+
+# 
+
+## 3. Men still alive in 1985, weighted by probability of not being dead due to natural causes in 1985 \vspace{2.5pt}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+coef3.tab <- readRDS(here::here('reports/left truncation/prostate cancer/resources/', "pr_mod3.tab.rds"))
+
+colnames(coef3.tab)[5] <- "(95\\% CI)"
+coef3.tab <- coef3.tab[,-c("events", "p")]
+coef3.tab[,"n"] <- as.character(round(unlist(coef3.tab[,"n"]), 0))
+coef3.tab[,"Covariate"] <- gsub(" 5$", "", unlist(coef3.tab[,"Covariate"]))
+
+print.xtable(xtable(coef3.tab))
+
+```
+\end{adjustbox}
+\end{table}
+
+#
+
+## 4. Men still alive in 1985, weighted by the stabilized inverse probability with truncation \vspace{2.5pt}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+coef4.tab <- readRDS(here::here('reports/left truncation/prostate cancer/resources/', "pr_mod4.tab.rds"))
+
+colnames(coef4.tab)[5] <- "(95\\% CI)"
+coef4.tab <- coef4.tab[,-c("events", "p")]
+coef4.tab[,"n"] <- as.character(round(unlist(coef4.tab[,"n"]), 0))
+coef4.tab[,"Covariate"] <- gsub(" 5$", "", unlist(coef4.tab[,"Covariate"]))
+
+print.xtable(xtable(coef4.tab))
+
+```
+\end{adjustbox}
+\end{table}
+
+
+# Results by MWF type
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.7}
+\centering
+```{r}
+str.tab <- cbind(
+	coef1.tab[grep("str", zoo::na.locf(coef1.tab[,Covariate])), 2],
+	NA,
+	coef1.tab[grep("str", zoo::na.locf(coef1.tab[,Covariate])),-c(1, 2, 5)],
+	NA,
+	coef2.tab[grep("str", zoo::na.locf(coef2.tab[,Covariate])), c(3, 4)],
+	NA,
+	coef3.tab[grep("str", zoo::na.locf(coef3.tab[,Covariate])), c(3, 4)],
+	NA,
+	coef4.tab[grep("str", zoo::na.locf(coef4.tab[,Covariate])), c(3, 4)])
+
+colnames(str.tab) <- sapply(1:ncol(str.tab), function (x) {paste(rep("%", x), collapse = "")})
+
+print.xtable(xtable(str.tab,
+										align = "llcccccccccccc"),
+						 add.to.row = list(
+						 	pos = list(0),
+						 	command = paste0(
+						 		"Cumulative straight & &",
+						 		"\\multicolumn{2}{c}{1973} & &",
+						 		"\\multicolumn{2}{c}{1985} & &",
+						 		"\\multicolumn{2}{c}{1985, weighted} & &",
+						 		"\\multicolumn{2}{c}{1985, s. weight}",
+						 		"\\\\\n",
+						 		"\\cline{3-4}",
+						 		"\\cline{6-7}",
+						 		"\\cline{9-10}",
+						 		"\\cline{12-13}",
+						 		"\n",
+						 		paste0(rep("&& n & HR", 4), collapse = ""),
+						 		"\\\\")
+						 ))
+
+```
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.7}
+\centering
+```{r}
+sol.tab <- cbind(
+	coef1.tab[grep("sol", zoo::na.locf(coef1.tab[,Covariate])), 2],
+	NA,
+	coef1.tab[grep("sol", zoo::na.locf(coef1.tab[,Covariate])),-c(1, 2, 5)],
+	NA,
+	coef2.tab[grep("sol", zoo::na.locf(coef2.tab[,Covariate])), c(3, 4)],
+	NA,
+	coef3.tab[grep("sol", zoo::na.locf(coef3.tab[,Covariate])), c(3, 4)],
+	NA,
+	coef4.tab[grep("sol", zoo::na.locf(coef4.tab[,Covariate])), c(3, 4)])
+
+colnames(sol.tab) <- sapply(1:ncol(sol.tab), function (x) {paste(rep("%", x), collapse = "")})
+
+print.xtable(xtable(sol.tab,
+										align = "llcccccccccccc"),
+						 add.to.row = list(
+						 	pos = list(0),
+						 	command = paste0(
+						 		"Cumulative soluble & &",
+						 		"\\multicolumn{2}{c}{1973} & &",
+						 		"\\multicolumn{2}{c}{1985} & &",
+						 		"\\multicolumn{2}{c}{1985, weighted} & &",
+						 		"\\multicolumn{2}{c}{1985, s. weight}",
+						 		"\\\\\n",
+						 		"\\cline{3-4}",
+						 		"\\cline{6-7}",
+						 		"\\cline{9-10}",
+						 		"\\cline{12-13}",
+						 		"\n",
+						 		paste0(rep("&& n & HR", 4), collapse = ""),
+						 		"\\\\")
+						 ))
+
+```
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.7}
+\centering
+```{r}
+syn.tab <- cbind(
+	coef1.tab[grep("syn", zoo::na.locf(coef1.tab[,Covariate])), 2],
+	NA,
+	coef1.tab[grep("syn", zoo::na.locf(coef1.tab[,Covariate])),-c(1, 2, 5)],
+	NA,
+	coef2.tab[grep("syn", zoo::na.locf(coef2.tab[,Covariate])), c(3, 4)],
+	NA,
+	coef3.tab[grep("syn", zoo::na.locf(coef3.tab[,Covariate])), c(3, 4)],
+	NA,
+	coef4.tab[grep("syn", zoo::na.locf(coef4.tab[,Covariate])), c(3, 4)])
+
+colnames(syn.tab) <- sapply(1:ncol(syn.tab), function (x) {paste(rep("%", x), collapse = "")})
+
+print.xtable(xtable(syn.tab,
+										align = "llcccccccccccc"),
+						 add.to.row = list(
+						 	pos = list(0),
+						 	command = paste0(
+						 		"Cumulative synthetic & &",
+						 		"\\multicolumn{2}{c}{1973} & &",
+						 		"\\multicolumn{2}{c}{1985} & &",
+						 		"\\multicolumn{2}{c}{1985, weighted} & &",
+						 		"\\multicolumn{2}{c}{1985, s. weight}",
+						 		"\\\\\n",
+						 		"\\cline{3-4}",
+						 		"\\cline{6-7}",
+						 		"\\cline{9-10}",
+						 		"\\cline{12-13}",
+						 		"\n",
+						 		paste0(rep("&& n & HR", 4), collapse = ""),
+						 		"\\\\")
+						 ))
+
+```
+\end{adjustbox}
+\end{table}

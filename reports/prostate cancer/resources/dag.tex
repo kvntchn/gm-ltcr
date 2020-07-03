@@ -1,0 +1,48 @@
+% !TEX program = lualatex
+
+\documentclass[12pt,
+  border={5pt 5pt 5pt 5pt}]{standalone}
+\usepackage[no-math]{fontspec}
+\setmainfont{Arial}
+\input{/Users/kevinchen/HeadRs/StatHead.sty}
+
+\usetikzlibrary{graphdrawing}
+\begin{document}
+\fbox{
+\begin{tikzpicture}[>= stealth, % arrow head style
+            shorten >= 0.5pt, % don't touch arrow head to node
+            auto,
+            node distance = 3cm, % distance between nodes
+            semithick, % line style
+            scale=0.85,
+            every node/.style={scale=0.85}
+        ]
+
+				\tikzstyle{every state}=[
+        shape=rectangle,
+        align=center,
+        draw = none,
+        thick,
+        fill = white,
+        %minimum size = 6mm
+        ]
+
+        % Nodes %%%%%
+        \node[state] (L)  {$L$};
+        \node[state] (U)  [below of=L] {$U$};
+        \node[state] (U*) [above of=L] {$U^*$};
+        \node[state] (Et) [right of=L] {$E$};
+				\node[state] (C)  [right of=Et, draw=black] {$C$};
+        \node[state] (Y)  [right of=C] {$Y$};
+
+				% Paths %%%%%
+				\path[->] (U*) edge (Et);
+				\path[->] (U*) edge (C);
+				\path[->] (U) edge (L);
+				\path[->] (U) [bend right=15] edge (Y);
+				\path[->] (L) [bend right=30] edge (C);
+
+
+\end{tikzpicture}
+}
+\end{document}
