@@ -58,8 +58,8 @@ weights.year.min <- 1941
 	- Missing no more than half of their work record
 - Individuals contributed person-time from three years after hire or `r weights.year.min` (whichever came first) to death or loss to follow-up
 - Individuals were considered lost to follow-up upon reaching the oldest observed age at death (106.56 years)
-- N = 36 986, (421 436 person-years)
-- Deaths due to natural causes by end of 1984: 3 196 (8.6\%)
+- N = 36 549, (698 394 person-years)
+- Deaths due to natural causes by end of 1984: 4 405 (11.4\%)
 
 # ICD codes for natural causes of death
 
@@ -69,154 +69,164 @@ weights.year.min <- 1941
 	- Excludes the categories labeled as “Injury and poisoning” and “external causes of injury and supplemental classification.”
 - ICD-10: all codes, except those with prefix S, T, V, W, X, or Y.
 
-# Pooled logistic regression
+<!-- # Pooled logistic regression -->
+
+<!-- \linespread{1.25} -->
+
+<!-- We use the pooled logistic regression model to estimate the log-odds of dying due to natural causes by the end of each year of follow-up $t = \left\{1,\ldots, T\right\}$, conditional on the $P$-length covariates vector $\bm{X_t} = \boldsymbol x_t$ and aliveness at the begining of that person-year $Y_{t - 1} = 0$. -->
+
+<!-- $$\log\frac{\widehat{\mathbb P}\left(Y_{t} = 1 \mid \boldsymbol X_{t} = \boldsymbol x_t, \hat{\boldsymbol \beta}, Y_{t - 1} = 0\right)}{1 - \widehat{\mathbb P}\left(Y_{t} = 1 \mid \boldsymbol X_{t} = \boldsymbol x_t, \hat{\boldsymbol \beta}, Y_{t - 1} = 0\right)} -->
+<!-- = \hat{\beta}_{0} + \hat{\beta}_1 X_{1t} +  \cdots + \hat{\beta}_P X_{Pt}$$ -->
+<!-- where $\hat{\beta}_0, \hat{\beta}_1,\ldots ,\hat{\beta}_P$ are the partial coefficient estimates. -->
+
+# Covariates
 
 \linespread{1.25}
 
-We use the pooled logistic regression model to estimate the log-odds of dying due to natural causes by the end of each year of follow-up $t = \left\{1,\ldots, T\right\}$, conditional on the $P$-length covariates vector $\bm{X_t} = \boldsymbol x_t$ and aliveness at the begining of that person-year $Y_{t - 1} = 0$.
+- Years since hire
+- Age
+- Plant
+- Race
+- Sex
+- Proportion of year spent in assembly, machining (includes grinding), and off
+- Cumulative time spent off
+- Year of hire
+- Cumulative exposure to straight, soluble, and synthetic MWFs
+- Employment status
+<!-- - Model 1: All covariates coded as categorical variables -->
+<!-- - Model 2: Years since hire and age included in penalized splines -->
 
-$$\log\frac{\widehat{\mathbb P}\left(Y_{t} = 1 \mid \boldsymbol X_{t} = \boldsymbol x_t, \hat{\boldsymbol \beta}, Y_{t - 1} = 0\right)}{1 - \widehat{\mathbb P}\left(Y_{t} = 1 \mid \boldsymbol X_{t} = \boldsymbol x_t, \hat{\boldsymbol \beta}, Y_{t - 1} = 0\right)}
-= \hat{\beta}_{0} + \hat{\beta}_1 X_{1t} +  \cdots + \hat{\beta}_P X_{Pt}$$
-where $\hat{\beta}_0, \hat{\beta}_1,\ldots ,\hat{\beta}_P$ are the partial coefficient estimates.
+<!-- # Model 1 results -->
 
-# Pooled logistic regression (continued)
+<!-- ```{r} -->
+<!-- glm.tab <- readRDS(here::here(paste0("reports/survival to 1985/resources/FU from ", weights.year.min), "small.glm.tab.rds"))  -->
+<!-- glm.tab[, `:=`(Covariate = { -->
+<!-- 	tmp <- Covariate -->
+<!-- 	tmp[duplicated(tmp)] <- "" -->
+<!-- 	tmp -->
+<!-- })] -->
+<!-- ``` -->
 
-\linespread{1.25}
+<!-- \begin{table}[H] -->
+<!-- \begin{adjustbox}{scale=0.75} -->
+<!-- \centering -->
+<!-- ```{r} -->
+<!-- xtable(glm.tab[1:20,-"SE"]) -->
+<!-- ``` -->
+<!-- \end{adjustbox} -->
+<!-- \end{table} -->
 
-- Covariates
-	- Years since hire (quartiles or splined)
-	- Age (quartiles or splined)
-	- Plant
-	- Race (black or white)
-	- Sex
-	- Proportion of year spent in assembly, machining (includes grinding), and off (quartiles)
-	- Cumulative time spent off (quartiles)
-	- Year of hire (quartiles)
-	- Cumulative exposure to straight, soluble, and synthetic MWFs (quartiles)
-	- Employment status
-- Model 1: All covariates coded as categorical variables
-- Model 2: Years since hire and age included in penalized splines
+<!-- # -->
 
-# Model 1 results
+<!-- ## Model 1 results (continued) -->
 
-```{r}
-glm.tab <- readRDS(here::here(paste0("reports/survival to 1985/resources/FU from ", weights.year.min), "small.glm.tab.rds")) 
-glm.tab[, `:=`(Covariate = {
-	tmp <- Covariate
-	tmp[duplicated(tmp)] <- ""
-	tmp
-})]
-```
+<!-- \vspace{2.5pt} -->
+<!-- \begin{table}[H] -->
+<!-- \begin{adjustbox}{scale=0.75} -->
+<!-- \centering -->
+<!-- ```{r} -->
+<!-- xtable(glm.tab[21:nrow(glm.tab),-"SE"]) -->
+<!-- ``` -->
+<!-- \end{adjustbox} -->
+<!-- \end{table} -->
 
-\begin{table}[H]
-\begin{adjustbox}{scale=0.75}
-\centering
-```{r}
-xtable(glm.tab[1:20,-"SE"])
-```
-\end{adjustbox}
-\end{table}
+<!-- # Model 2 results -->
 
-#
+<!-- ```{r} -->
+<!-- gam.tab <- readRDS(here::here("reports/survival to 1985/resources", "small.gam.tab.rds")) -->
+<!-- gam.tab[, `:=`(Covariate = { -->
+<!-- 	tmp <- Covariate -->
+<!-- 	tmp[duplicated(tmp)] <- "" -->
+<!-- 	tmp -->
+<!-- })] -->
+<!-- ``` -->
 
-## Model 1 results (continued)
+<!-- \begin{table}[H] -->
+<!-- \begin{adjustbox}{scale=0.75} -->
+<!-- \centering -->
+<!-- ```{r} -->
+<!-- xtable(gam.tab[1:17,-"SE"]) -->
+<!-- ``` -->
+<!-- \end{adjustbox} -->
+<!-- \end{table} -->
 
-\vspace{2.5pt}
-\begin{table}[H]
-\begin{adjustbox}{scale=0.75}
-\centering
-```{r}
-xtable(glm.tab[21:nrow(glm.tab),-"SE"])
-```
-\end{adjustbox}
-\end{table}
+<!-- # -->
 
-# Model 2 results
+<!-- ## Model 2 results (continued) -->
 
-```{r}
-gam.tab <- readRDS(here::here("reports/survival to 1985/resources", "small.gam.tab.rds"))
-gam.tab[, `:=`(Covariate = {
-	tmp <- Covariate
-	tmp[duplicated(tmp)] <- ""
-	tmp
-})]
-```
+<!-- \vspace{\baselineskip} -->
+<!-- \begin{table}[H] -->
+<!-- \begin{adjustbox}{scale=0.75} -->
+<!-- \centering -->
+<!-- ```{r} -->
+<!-- xtable(gam.tab[18:nrow(gam.tab),-"SE"]) -->
+<!-- ``` -->
+<!-- \end{adjustbox} -->
+<!-- \end{table} -->
+<!-- \vspace{\baselineskip} -->
+<!-- \footnotesize Splined terms not shown. -->
 
-\begin{table}[H]
-\begin{adjustbox}{scale=0.75}
-\centering
-```{r}
-xtable(gam.tab[1:17,-"SE"])
-```
-\end{adjustbox}
-\end{table}
+<!-- # From log-odds to survival -->
 
-#
+<!-- \linespread{1.25} -->
 
-## Model 2 results (continued)
+<!-- 1. Extract the fitted probabilities $\hat p_{ti}$ from the pooled logistic regression (`fitted.values` of an object of class `lm`; the inverse of the link function has already been applied) -->
+<!-- 2. For each individual, with obserations ordered by time $t$, take the cumulative product $\prod_t(1 - \hat p_{ti})$ -->
+<!-- 3. The cumulative product in each row represents the probability of survival (for natural cause mortality) to the end of that row's year -->
 
-\vspace{\baselineskip}
-\begin{table}[H]
-\begin{adjustbox}{scale=0.75}
-\centering
-```{r}
-xtable(gam.tab[18:nrow(gam.tab),-"SE"])
-```
-\end{adjustbox}
-\end{table}
-\vspace{\baselineskip}
-\footnotesize Splined terms not shown.
+<!-- # Average survival probabilities by race, sex and year of hire among those still alive in 1985 -->
 
-# From log-odds to survival
+<!-- ```{r} -->
+<!-- by_race <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_race.rds")) -->
+<!-- by_sex <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_sex.rds")) -->
+<!-- by_yin <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_yin.rds")) -->
 
-\linespread{1.25}
+<!-- bybaseline.tab <- rbindlist(list( -->
+<!-- 	by_race, -->
+<!-- 	by_sex, -->
+<!-- 	by_yin), idcol = "Covariate", use.names = F) -->
 
-1. Extract the fitted probabilities $\hat p_{ti}$ from the pooled logistic regression (`fitted.values` of an object of class `lm`; the inverse of the link function has already been applied)
-2. For each individual, with obserations ordered by time $t$, take the cumulative product $\prod_t(1 - \hat p_{ti})$
-3. The cumulative product in each row represents the probability of survival (for natural cause mortality) to the end of that row's year
+<!-- names(bybaseline.tab)[2] <- "level" -->
 
-# Average survival probabilities by race, sex and year of hire among those still alive in 1985
+<!-- bybaseline.tab[,`:=`(Covariate = { -->
+<!-- 	tmp <- factor(Covariate, 1:3, c("Race", "Sex", "Year of hire")) -->
+<!-- 	tmp <- levels(tmp)[as.numeric(tmp)] -->
+<!-- 	tmp[duplicated(tmp)] <- "" -->
+<!-- 	tmp -->
+<!-- 	}, -->
+<!-- 	level = gsub(",", ", ", level))] -->
 
-```{r}
-by_race <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_race.rds"))
-by_sex <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_sex.rds"))
-by_yin <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_yin.rds"))
+<!-- ``` -->
 
-bybaseline.tab <- rbindlist(list(
-	by_race,
-	by_sex,
-	by_yin), idcol = "Covariate", use.names = F)
+<!-- \begin{table}[H] -->
+<!-- \begin{adjustbox}{scale=0.75} -->
+<!-- \centering -->
+<!-- ```{r} -->
+<!-- xtable(bybaseline.tab) -->
+<!-- ``` -->
+<!-- \end{adjustbox} -->
+<!-- \end{table} -->
 
-names(bybaseline.tab)[2] <- "level"
-
-bybaseline.tab[,`:=`(Covariate = {
-	tmp <- factor(Covariate, 1:3, c("Race", "Sex", "Year of hire"))
-	tmp <- levels(tmp)[as.numeric(tmp)]
-	tmp[duplicated(tmp)] <- ""
-	tmp
-	},
-	level = gsub(",", ", ", level))]
-
-```
-
-\begin{table}[H]
-\begin{adjustbox}{scale=0.75}
-\centering
-```{r}
-xtable(bybaseline.tab)
-```
-\end{adjustbox}
-\end{table}
-
-# Average survival probabilities by age and employment status among those still alive in 1985
+# Average survival probabilities by age group among those still alive in 1985
 
 ```{r}
-by_age <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_age.rds"))
-by_employment <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_employment-status.rds"))
+for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire")) {
+	tmp <- readRDS(
+				 	file = here::here("resources", paste0("survival_by-", gsub(" ", "-" , covariate), ".rds"))
+				 )
+	
+	if (grepl("\\]", unlist(tmp[,1]))) {
+	tmp[,(covariate) := paste0("$", get(covariate), "$")]
+		}
+	
+	assign(paste0(gsub(" ", "_" , tolower(covariate)), ".prob.tab"),
+				 tmp,
+				 envir = .GlobalEnv)
+}
 
 bytimevarying.tab <- rbindlist(list(
-	by_age,
-	by_employment), idcol = "Covariate", use.names = F)
+	age.prob.tab,
+	employment_status.prob.tab), idcol = "Covariate", use.names = F)
 
 names(bytimevarying.tab)[2] <- "level"
 
@@ -234,14 +244,25 @@ bytimevarying.tab[,`:=`(Covariate = {
 \begin{adjustbox}{scale=0.75}
 \centering
 ```{r}
-xtable(bytimevarying.tab)
+xtable(age.prob.tab)
 ```
 \end{adjustbox}
 \end{table}
 
-# Average survival probabilities by MWF exposure among those still alive in 1985
+# Average survival probabilities by employment status among those still alive in 1985
 
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
 ```{r}
+xtable(employment_status.prob.tab)
+```
+\end{adjustbox}
+\end{table}
+
+<!-- # Average survival probabilities by MWF exposure among those still alive in 1985 -->
+
+```{r, eval=F}
 by_str <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_straight.rds"))
 by_sol <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_soluble.rds"))
 by_syn <- readRDS(here::here("reports/survival to 1985/resources", "small.survival_by_synthetic.rds"))
@@ -261,31 +282,33 @@ bymwf.tab[,`:=`(`Cumulative exposure` = {
 
 ```
 
-\begin{table}[H]
-\begin{adjustbox}{scale=0.75}
-\centering
-```{r}
-xtable(bymwf.tab)
-```
-\end{adjustbox}
-\end{table}
+<!-- \begin{table}[H] -->
+<!-- \begin{adjustbox}{scale=0.75} -->
+<!-- \centering -->
+<!-- ```{r} -->
+<!-- xtable(bymwf.tab) -->
+<!-- ``` -->
+<!-- \end{adjustbox} -->
+<!-- \end{table} -->
 
 # ROC Curve
 
-\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "small.roc.pdf")`}
+\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "sl.roc.pdf")`}
 
 \footnotesize
 
-Outcome: Natural cause mortality status in 1985
+Outcome: Natural cause mortality status in 1984
 
 An individual's probability of not dying due to natural causes was calculated as: $\prod_t(1 - \hat p_t)$ where $\hat p_t$ is the predicted probability of death due to natural causes for the $t^\text{th}$ year of follow-up.
 
-# Increase maximum number of levels from 4 to 20
+# ROC Thresholds
 
-\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "roc.pdf")`}
+```{r}
+roc.threshold <- readRDS(
+	file = here::here("resources", "roc.threshold.rds"))
 
-\footnotesize
+names(roc.threshold) <- gsub("threshold\\.", "", names(roc.threshold))
 
-Outcome: Natural cause mortality status in 1985
-
-An individual's probability of not dying due to natural causes was calculated as: $\prod_t(1 - \hat p_t)$ where $\hat p_t$ is the predicted probability of death due to natural causes for the $t^\text{th}$ year of follow-up.
+roc.threshold %>% xtable(digits = 4) %>% 
+	print
+```

@@ -169,7 +169,7 @@ cohort_prostate <- cohort_analytic[
 
 # Get incidence key and other helpers
 cohort2 <- as.data.frame(matrix(ncol = length(col.names)))
-source(here::here("cancer incidence", "incidence.R"))
+source(here::here("../gm-cancer-inc", "incidence.R"))
 
 # Sort
 setorder(cohort_prostate, studyno, year)

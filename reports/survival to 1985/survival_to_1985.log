@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  1 JUN 2020 11:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  9 JUL 2020 13:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -799,6 +799,70 @@ Package: multicol 2019/12/09 v1.8y multicolumn formatting (FMi)
 \WF@box=\box120
 \WF@everypar=\toks47
 Package: wrapfig 2003/01/31  v 3.6
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/mathastext/mathastext.sty
+Package: mathastext 2019/11/16 v1.3w Use the text font in math mode (JFB)
+\mst@exists@muskip=\muskip18
+\mst@forall@muskip=\muskip19
+\mst@prime@muskip=\muskip20
+\mst@do@nonletters=\toks48
+\mst@do@easynonletters=\toks49
+\mst@do@az=\toks50
+\mst@do@AZ=\toks51
+\symmtoperatorfont=\mathgroup6
+\symmtletterfont=\mathgroup7
+** ! and ?
+** punctuation: , . : ; and \colon
+LaTeX Info: Redefining \rightarrowfill on input line 790.
+LaTeX Info: Redefining \leftarrowfill on input line 795.
+** + and =
+** adding = ; and + to \nfss@catcodes
+** parentheses ( ) [ ] and slash /
+** alldelims: < > \backslash \setminus | \vert \mid \{ and \}
+LaTeX Font Info:    Redeclaring math delimiter \backslash on input line 932.
+LaTeX Font Info:    Redeclaring math symbol \setminus on input line 944.
+LaTeX Info: Redefining \models on input line 953.
+** \# \mathdollar \% \& 
+** \imath and \jmath 
+LaTeX Font Info:    Overwriting math alphabet `\mathnormalbold' in version `nor
+mal'
+(Font)                  T1/lmss/b/it --> T1/lmss/b/it on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\mathnormalbold' in version `bol
+d'
+(Font)                  T1/lmss/b/it --> T1/lmss/b/it on input line 2140.
+LaTeX Font Info:    Overwriting symbol font `mtletterfont' in version `normal'
+(Font)                  T1/lmss/m/it --> T1/lmss/m/it on input line 2140.
+LaTeX Font Info:    Overwriting symbol font `mtletterfont' in version `bold'
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 2140.
+LaTeX Font Info:    Overwriting symbol font `mtoperatorfont' in version `normal
+'
+(Font)                  T1/lmss/m/n --> T1/lmss/m/n on input line 2140.
+LaTeX Font Info:    Overwriting symbol font `mtoperatorfont' in version `bold'
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathbf' in version `normal'
+(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathbf' in version `bold'
+(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathit' in version `normal'
+(Font)                  T1/lmss/m/it --> T1/lmss/m/it on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathit' in version `bold'
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathsf' in version `normal'
+(Font)                  T1/lmss/m/n --> T1/lmss/m/n on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathsf' in version `bold'
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathtt' in version `normal'
+(Font)                  T1/lmtt/m/n --> T1/lmtt/m/n on input line 2140.
+LaTeX Font Info:    Overwriting math alphabet `\Mathtt' in version `bold'
+(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 2140.
+** Latin letters in the normal (resp. bold) math versions are now
+** set up to use the fonts T1/lmss/m(b)/it
+** Other characters (digits, ...) and \log-like names will be
+** typeset with the n shape.
+** \hbar
+** minus as endash
+** \HUGE has been (re)-defined.
+** mathastext has declared larger sizes for subscripts.
+** To keep LaTeX defaults, use option `defaultmathsizes'.
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/biblatex/biblatex.sty
 Package: biblatex 2019/12/01 v3.14 programmable bibliographies (PK/MW)
 (/usr/local/texlive/2020/texmf-dist/tex/latex/logreq/logreq.sty
@@ -979,10 +1043,10 @@ File: biblatex.def 2019/12/01 v3.14 biblatex compatibility (PK/MW)
 \c@biburlnumpenalty=\count450
 \c@biburlucpenalty=\count451
 \c@biburllcpenalty=\count452
-\biburlbigskip=\muskip18
-\biburlnumskip=\muskip19
-\biburlucskip=\muskip20
-\biburllcskip=\muskip21
+\biburlbigskip=\muskip21
+\biburlnumskip=\muskip22
+\biburlucskip=\muskip23
+\biburllcskip=\muskip24
 \c@smartand=\count453
 )
 Package biblatex Info: Trying to load bibliography style 'numeric'...
@@ -1032,7 +1096,7 @@ Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
 \LT@rows=\count458
 \c@LT@tables=\count459
 \c@LT@chunks=\count460
-\LT@p@ftn=\toks48
+\LT@p@ftn=\toks52
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/xtab/xtab.sty
 Package: xtab 2011/07/31 v2.3f Extended supertabular package
 \c@tracingst=\count461
@@ -1118,8 +1182,8 @@ Package: pgffor 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/local/texlive/2020/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
 \pgffor@iter=\dimen325
 \pgffor@skip=\dimen326
-\pgffor@stack=\toks49
-\pgffor@toks=\toks50
+\pgffor@stack=\toks53
+\pgffor@toks=\toks54
 ))
 (/usr/local/texlive/2020/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.cod
 e.tex
@@ -1286,7 +1350,7 @@ Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
 \col@sep=\dimen344
 \ar@mcellbox=\box153
 \extrarowheight=\dimen345
-\NC@list=\toks51
+\NC@list=\toks55
 \extratabsurround=\skip101
 \backup@length=\skip102
 \ar@cellbox=\box154
@@ -1296,8 +1360,8 @@ Package: adjustbox 2019/01/04 v1.2 Adjusting TeX boxes (trim, clip, ...)
 Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 (/usr/local/texlive/2020/texmf-dist/tex/generic/xkeyval/xkeyval.tex (/usr/local
 /texlive/2020/texmf-dist/tex/generic/xkeyval/xkvutils.tex
-\XKV@toks=\toks52
-\XKV@tempa@toks=\toks53
+\XKV@toks=\toks56
+\XKV@tempa@toks=\toks57
 )
 \XKV@depth=\count484
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
@@ -1338,7 +1402,7 @@ Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 )) (/usr/local/texlive/2020/texmf-dist/tex/latex/listings/listings.sty
 \lst@mode=\count487
 \lst@gtempboxa=\box157
-\lst@token=\toks54
+\lst@token=\toks58
 \lst@length=\count488
 \lst@currlwidth=\dimen360
 \lst@column=\count489
@@ -1361,8 +1425,8 @@ Package: listings 2020/03/24 1.8d (Carsten Heinz)
 Package: tcolorbox 2019/11/15 version 4.22 text color boxes
 (/usr/local/texlive/2020/texmf-dist/tex/latex/tools/verbatim.sty
 Package: verbatim 2019/11/10 v1.5r LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks55
-\verbatim@line=\toks56
+\every@verbatim=\toks59
+\verbatim@line=\toks60
 \verbatim@in@stream=\read4
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/environ/environ.sty
 Package: environ 2014/05/04 v0.3 A new way to define environments
@@ -1383,8 +1447,8 @@ Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 \tcb@out=\write6
 \tcb@record@out=\write7
 )
-Package hyperref Info: Option `unicode' set `true' on input line 206.
-Package hyperref Info: Option `breaklinks' set `true' on input line 206.
+Package hyperref Info: Option `unicode' set `true' on input line 223.
+Package hyperref Info: Option `breaklinks' set `true' on input line 223.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/physics/physics.sty
 Package: physics 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (/us
@@ -1421,16 +1485,16 @@ LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 130.
 \xmathstrut@box=\box168
 \xmathstrut@dim=\dimen371
 )
-\sympureletters=\mathgroup6
+\sympureletters=\mathgroup8
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/mathkerncmss/m/sl --> OT1/mathkerncmss/bx/sl on inp
-ut line 215.
+ut line 232.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/tools/bm.sty
 Package: bm 2019/07/24 v1.2d Bold Symbol Support (DPC/FMi)
-\symboldoperators=\mathgroup7
-\symboldletters=\mathgroup8
-\symboldsymbols=\mathgroup9
-\symboldpureletters=\mathgroup10
+\symboldoperators=\mathgroup9
+\symboldletters=\mathgroup10
+\symboldsymbols=\mathgroup11
+\symboldmtoperatorfont=\mathgroup12
 LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 141.
 LaTeX Info: Redefining \bm on input line 209.
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/was/gensymb.sty
@@ -1812,31 +1876,31 @@ Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 (./survival_to_1985.aux)
 \openout1 = `survival_to_1985.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 301.
-LaTeX Font Info:    ... okay on input line 301.
-LaTeX Font Info:    Checking defaults for LGR/cmr/m/n on input line 301.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 318.
+LaTeX Font Info:    ... okay on input line 318.
+LaTeX Font Info:    Checking defaults for LGR/cmr/m/n on input line 318.
 LaTeX Font Info:    Trying to load font information for LGR+cmr on input line 3
-01.
+18.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/cbfonts-fd/lgrcmr.fd
 File: lgrcmr.fd 2017/07/29 v1.2 Greek European Computer Regular
 )
-LaTeX Font Info:    ... okay on input line 301.
+LaTeX Font Info:    ... okay on input line 318.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -1878,12 +1942,12 @@ LaTeX Font Info:    ... okay on input line 301.
 \scratchbox=\box171
 \nofMPsegments=\count507
 \nofMParguments=\count508
-\everyMPshowfont=\toks57
+\everyMPshowfont=\toks61
 \MPscratchCnt=\count509
 \MPscratchDim=\dimen373
 \MPnumerator=\count510
 \makeMPintoPDFobject=\count511
-\everyMPtoPDFconversion=\toks58
+\everyMPtoPDFconversion=\toks62
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -1893,7 +1957,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 )) ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box172
-Package hyperref Info: Link coloring OFF on input line 301.
+Package hyperref Info: Link coloring OFF on input line 318.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 (/usr/local/texlive/2020/texmf-dist/tex/latex/refcount/refcount.sty
@@ -1905,83 +1969,68 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count512
 )
-LaTeX Info: Redefining \ref on input line 301.
-LaTeX Info: Redefining \pageref on input line 301.
-LaTeX Info: Redefining \nameref on input line 301.
+LaTeX Info: Redefining \ref on input line 318.
+LaTeX Info: Redefining \pageref on input line 318.
+LaTeX Info: Redefining \nameref on input line 318.
 (./survival_to_1985.out) (./survival_to_1985.out)
 \@outlinefile=\write8
 \openout8 = `survival_to_1985.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 301.
+(Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 318.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/lmr/bx/n --> OT1/cmss/b/n on input line 301.
+(Font)                  OT1/lmr/bx/n --> OT1/cmss/b/n on input line 318.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 301.
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 318.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmss/b/n --> OT1/lmss/b/n on input line 301.
-\symnumbers=\mathgroup11
-LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 301.
+(Font)                  OT1/cmss/b/n --> OT1/lmss/b/n on input line 318.
+\symnumbers=\mathgroup13
+LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 318.
 LaTeX Font Info:    Encoding `OT1' has changed to `T1' for symbol font
-(Font)              `pureletters' in the math version `normal' on input line 30
-1.
+(Font)              `pureletters' in the math version `normal' on input line 31
+8.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `normal'
-(Font)                  OT1/mathkerncmss/m/sl --> T1/lmss/m/it on input line 30
-1.
+(Font)                  OT1/mathkerncmss/m/sl --> T1/lmss/m/it on input line 31
+8.
 LaTeX Font Info:    Encoding `OT1' has changed to `T1' for symbol font
-(Font)              `pureletters' in the math version `bold' on input line 301.
+(Font)              `pureletters' in the math version `bold' on input line 318.
 
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/mathkerncmss/bx/sl --> T1/lmss/m/it on input line 3
-01.
+18.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/lmss/m/n --> T1/lmr/m/n on input line 301.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 301.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 301.
+(Font)                  OT1/lmss/m/n --> T1/lmr/m/n on input line 318.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 318.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/lmss/m/n --> T1/lmss/m/n on input line 301.
+(Font)                  OT1/lmss/m/n --> T1/lmss/m/n on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/lmss/bx/n --> T1/lmss/m/n on input line 301.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 301.
+(Font)                  OT1/lmss/bx/n --> T1/lmss/m/n on input line 318.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/lmr/m/it --> T1/lmss/m/it on input line 301.
+(Font)                  OT1/lmr/m/it --> T1/lmss/m/it on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/lmr/bx/it --> T1/lmss/m/it on input line 301.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 301.
+(Font)                  OT1/lmr/bx/it --> T1/lmss/m/it on input line 318.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 301.
+(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 301.
+(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 318.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 301.
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 318.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 301.
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/lmss/b/n --> T1/lmr/b/n on input line 301.
+(Font)                  OT1/lmss/b/n --> T1/lmr/b/n on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 301.
+(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 301.
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 301.
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 318.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 301.
-LaTeX Font Info:    Redeclaring symbol font `boldpureletters' on input line 301
-.
-LaTeX Font Info:    Encoding `OT1' has changed to `T1' for symbol font
-(Font)              `boldpureletters' in the math version `normal' on input lin
-e 301.
-LaTeX Font Info:    Overwriting symbol font `boldpureletters' in version `norma
-l'
-(Font)                  OT1/mathkerncmss/bx/sl --> T1/lmss/bx/it on input line 
-301.
-LaTeX Font Info:    Encoding `OT1' has changed to `T1' for symbol font
-(Font)              `boldpureletters' in the math version `bold' on input line 
-301.
-LaTeX Font Info:    Overwriting symbol font `boldpureletters' in version `bold'
-
-(Font)                  OT1/mathkerncmss/bx/sl --> T1/lmss/bx/it on input line 
-301.
+(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 318.
+\symboldpureletters=\mathgroup14
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/translator/translator-basic-dicti
 onary-English.dict
@@ -2007,14 +2056,14 @@ Dictionary: translator-numbers-dictionary, Language: English
 tionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-LaTeX Info: Redefining \microtypecontext on input line 301.
+LaTeX Info: Redefining \microtypecontext on input line 318.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 301.
+LaTeX Info: Redefining \showhyphens on input line 318.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -2022,6 +2071,8 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmss' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
+Package mathastext Info: current meaning of amsmath \resetMathstrut@ saved on i
+nput line 318.
 Package biblatex Info: Trying to load language 'english'...
 Package biblatex Info: ... file 'english.lbx' found.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/biblatex/lbx/english.lbx
@@ -2038,28 +2089,28 @@ Package biblatex Info: Data encoding 'utf8' specified.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'survival_to_1985.bbl' found.
 (./survival_to_1985.bbl)
-Package biblatex Info: Reference section=0 on input line 301.
-Package biblatex Info: Reference segment=0 on input line 301.
+Package biblatex Info: Reference section=0 on input line 318.
+Package biblatex Info: Reference segment=0 on input line 318.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count513
-\symgns@font=\mathgroup12
+\symgns@font=\mathgroup15
 LaTeX Font Info:    Overwriting symbol font `gns@font' in version `bold'
-(Font)                  TS1/lmss/m/n --> TS1/lmss/b/n on input line 301.
-Package gensymb Info: Math companion symbols declared on input line 301.
-LaTeX Info: Redefining \degree on input line 301.
-LaTeX Info: Redefining \celsius on input line 301.
+(Font)                  TS1/lmss/m/n --> TS1/lmss/b/n on input line 318.
+Package gensymb Info: Math companion symbols declared on input line 318.
+LaTeX Info: Redefining \degree on input line 318.
+LaTeX Info: Redefining \celsius on input line 318.
 Package gensymb Info: Using text companion symbols for \degree, \celsius and \p
-erthousand on input line 301.
-LaTeX Info: Redefining \ohm on input line 301.
-Package gensymb Info: Using \textohm for \ohm on input line 301.
-Package gensymb Info: Using \textmu for \micro on input line 301.
+erthousand on input line 318.
+LaTeX Info: Redefining \ohm on input line 318.
+Package gensymb Info: Using \textohm for \ohm on input line 318.
+Package gensymb Info: Using \textmu for \micro on input line 318.
 (./survival_to_1985.nav) [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 
-335.
+352.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ot1lmss.fd
 File: ot1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
@@ -2068,34 +2119,34 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
-35.
+52.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-335.
+352.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-335.
+352.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 335.
+(Font)              <10.95> on input line 352.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 335.
+(Font)              <9> on input line 352.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 335.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 335
+(Font)              <7> on input line 352.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 352
 .
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 335
+LaTeX Font Info:    Trying to load font information for U+msb on input line 352
 .
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -2103,135 +2154,105 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 335.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 335.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 335.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 352.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-35.
+52.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10.95> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <9> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <7> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 352.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10.95> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 335.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 352.
 
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <8> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 335.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <9> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 352.
 
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <6> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 335.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <7> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 352.
 
 LaTeX Font Info:    Trying to load font information for TS1+lmss on input line 
-335.
+352.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmss.fd
 File: ts1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 335.
+(Font)              <10> on input line 352.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 335.
+(Font)              <8> on input line 352.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 335.
+(Font)              <6> on input line 352.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 335.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 335.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 335.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <8> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 352.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <6> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 352.
 LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 335.
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 352.
 
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <7> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 335.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <8> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 352.
 
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <5> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 335.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <6> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 352.
 
 [2
 
 ] [3
 
-]
-Overfull \hbox (6.88951pt too wide) detected at line 375
-[] [] \OT1/lmss/m/n/10.95 = [] + []\T1/lmss/m/sl/10.95 X[] \OT1/lmss/m/n/10.95 
-+ [] + []\T1/lmss/m/sl/10.95 X[]
- []
-
-[4
+] [4
 
 ] [5
 
 ] [6
 
 ]
-Overfull \vbox (1.92618pt too high) detected at line 499
+</Users/kevinchen/eisen/gm-ltcr/reports/survival to 1985/resources/sl.roc.pdf, 
+id=53, 343.28047pt x 216.81pt>
+File: /Users/kevinchen/eisen/gm-ltcr/reports/survival to 1985/resources/sl.roc.
+pdf Graphic file (type pdf)
+<use /Users/kevinchen/eisen/gm-ltcr/reports/survival to 1985/resources/sl.roc.p
+df>
+Package pdftex.def Info: /Users/kevinchen/eisen/gm-ltcr/reports/survival to 198
+5/resources/sl.roc.pdf  used on input line 470.
+(pdftex.def)             Requested size: 291.78978pt x 184.28935pt.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 470.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 470.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <5> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 470.
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <5> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 470.
+
+
+Overfull \vbox (8.30061pt too high) detected at line 470
  []
 
 [7
 
+ </Users/kevinchen/eisen/gm-ltcr/reports/survival to 1985/resources/sl.roc.pdf>
 ] [8
 
-] [9
-
 ]
-\openout4 = `survival_to_1985.vrb'.
-
-(./survival_to_1985.vrb
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-0.
-(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)) [10
-
-] [11
-
-] [12
-
-] [13
-
-]
-</Users/kevinchen/eisen/GM/reports/survival to 1985/resources/small.roc.pdf, id
-=109, 343.28047pt x 216.81pt>
-File: /Users/kevinchen/eisen/GM/reports/survival to 1985/resources/small.roc.pd
-f Graphic file (type pdf)
-<use /Users/kevinchen/eisen/GM/reports/survival to 1985/resources/small.roc.pdf
->
-Package pdftex.def Info: /Users/kevinchen/eisen/GM/reports/survival to 1985/res
-ources/small.roc.pdf  used on input line 692.
-(pdftex.def)             Requested size: 291.78978pt x 184.28935pt.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 692.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 692.
-LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <9> not available
-(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 692.
-
-
-Overfull \vbox (7.60617pt too high) detected at line 692
- []
-
-[14
-
- </Users/kevinchen/eisen/GM/reports/survival to 1985/resources/small.roc.pdf>]
-</Users/kevinchen/eisen/GM/reports/survival to 1985/resources/roc.pdf, id=127, 
-343.28047pt x 216.81pt>
-File: /Users/kevinchen/eisen/GM/reports/survival to 1985/resources/roc.pdf Grap
-hic file (type pdf)
-<use /Users/kevinchen/eisen/GM/reports/survival to 1985/resources/roc.pdf>
-Package pdftex.def Info: /Users/kevinchen/eisen/GM/reports/survival to 1985/res
-ources/roc.pdf  used on input line 708.
-(pdftex.def)             Requested size: 291.78978pt x 184.28935pt.
-
-Overfull \vbox (7.60617pt too high) detected at line 708
- []
-
-[15
-
- </Users/kevinchen/eisen/GM/reports/survival to 1985/resources/roc.pdf>]
 \tf@nav=\write9
 \openout9 = `survival_to_1985.nav'.
 
@@ -2242,15 +2263,15 @@ Overfull \vbox (7.60617pt too high) detected at line 708
 \openout11 = `survival_to_1985.snm'.
 
 
-Package caption Warning: Unused \captionsetup[ContinuedFloat] on input line 155
+Package caption Warning: Unused \captionsetup[ContinuedFloat] on input line 172
 .
 See the caption package documentation for explanation.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 710.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 710.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 488.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 488.
 (./survival_to_1985.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 710.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 710.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 488.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 488.
 Package rerunfilecheck Info: File `survival_to_1985.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 Package logreq Info: Writing requests to 'survival_to_1985.run.xml'.
@@ -2258,37 +2279,27 @@ Package logreq Info: Writing requests to 'survival_to_1985.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 44089 strings out of 480608
- 861581 string characters out of 5903631
- 1510010 words of memory out of 5000000
- 59031 multiletter control sequences out of 15000+600000
- 657568 words of font info for 139 fonts, out of 8000000 for 9000
+ 44775 strings out of 480608
+ 870297 string characters out of 5903631
+ 1508086 words of memory out of 5000000
+ 59750 multiletter control sequences out of 15000+600000
+ 673375 words of font info for 140 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  58i,11n,80p,804b,790s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
-texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/20
-20/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2020/texmf-dist/
-fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/
-dvips/lm/lm-mathex.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/public/l
-m/lmex10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.p
-fb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></usr/
-local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr/local/texl
-ive/2020/texmf-dist/fonts/type1/public/lm/lmss12.pfb></usr/local/texlive/2020/t
-exmf-dist/fonts/type1/public/lm/lmss8.pfb></usr/local/texlive/2020/texmf-dist/f
-onts/type1/public/lm/lmss9.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/
-public/lm/lmssbo10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/l
-m/lmsso10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsso8.
-pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsso9.pfb></usr/
-local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texl
-ive/2020/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2020/te
-xmf-dist/fonts/type1/public/lm/lmsy9.pfb></usr/local/texlive/2020/texmf-dist/fo
-nts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/
-public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2020/texmf-dist/fonts/ty
-pe1/public/amsfonts/symbols/msbm10.pfb>
-Output written on survival_to_1985.pdf (15 pages, 295905 bytes).
+texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2020/t
+exmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}</usr/local/texlive/2020/texmf-dist/
+fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type
+1/public/lm/lmss10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/l
+m/lmss12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmss8.pf
+b></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmss9.pfb></usr/loc
+al/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsso8.pfb></usr/local/texlive
+/2020/texmf-dist/fonts/type1/public/lm/lmsso9.pfb></usr/local/texlive/2020/texm
+f-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
+Output written on survival_to_1985.pdf (8 pages, 178432 bytes).
 PDF statistics:
- 216 PDF objects out of 1000 (max. 8388607)
- 166 compressed objects within 2 object streams
- 45 named destinations out of 1000 (max. 500000)
- 20533 words of extra memory for PDF output out of 20736 (max. 10000000)
+ 117 PDF objects out of 1000 (max. 8388607)
+ 88 compressed objects within 1 object stream
+ 24 named destinations out of 1000 (max. 500000)
+ 18480 words of extra memory for PDF output out of 20736 (max. 10000000)
 
