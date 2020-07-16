@@ -69,18 +69,22 @@ str(cohort_select)
 # cohort_select <- cbind(cohort_select[,!col.is_long_factor, with = F], one_hot.bind(one_hot))
 
 # Fit ####
-sl.library <- c("sl", "mean", "lm", "glm", "glm.interaction",
-								"step", "step.interaction",
-								"glmnet", "biglasso",
+sl.library <- c("sl", "mean",
+								"lm", "glm", # categorical
+								"glm.interaction", # continuous
+								"step", "step.interaction", # categorical
+								"glmnet", "biglasso", # categorical
 								# "ridge", # Not possible for binomial
-								"gam",
+								"gam", # continuous
 								# "loess", # Not possible for binomial
-								"earth",
-								"ranger",
-								"knn", # Too many ties
-								"ksvm", # Vector memory exausted
+								"earth", # continuous
+								"ranger", # categorical
+								"knn", # continuous, else too many ties
+								"ksvm", # continous, else vector memory exausted
 								# "svm", # Infeasible
-								"rpart", "rpartPrune", "xgboost")
+								"rpart", "rpartPrune", # categorical
+								# "xgboost" # categorical # very long computation time
+								)
 source(here::here("sl_library.R"))
 # Set up parallel computation - no windows
 num_cores <- RhpcBLASctl::get_num_cores()
