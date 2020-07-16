@@ -43,7 +43,7 @@ col.names <- c(
 set.seed(236)
 studyno.sample <- sample(unique(cohort_analytic$studyno), 1500)
 cohort_select <- cohort_analytic[
-	studyno %in% studyno.sample
+	# studyno %in% studyno.sample
 	, col.names, with = F]
 
 # Check data characteristics
@@ -99,15 +99,13 @@ saveRDS(sl, file = to_drive_D(here::here("resources", "sl.rdata")))
 # sl <- readRDS(file = to_drive_D(here::here("resources", "sl.rdata")))
 
 # Get predictions
-sl.predict <- predict(sl, as.data.frame(cohort_select[,c(X_cat.names, X.names), with = F]), onlySL = T)
-
-sl.predict <- data.table(
-	studyno = cohort_select$studyno,
+sl.predict <- as.data.table(
+	cbind(studyno = cohort_select$studyno,
 	year = cohort_select$year,
-	sl = as.vector(sl.predict$pred),
-	sl.predict$library.predict)
+	sl$library.predict)
+	)
 
-names(sl.predict)[-(1:3)] <- sl.library[-1]
+names(sl.predict) <- gsub("2_All$|^SL.", "", names(sl.predict))
 
 # box_save(sl.predict,
 # 				 dir_id = 117568282871,
