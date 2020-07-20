@@ -18,7 +18,8 @@ source(here::here('get-data.R'))
 setorder(cohort_analytic, studyno, year)
 
 # Drop unnecessary variables and take subset for fast testing
-X_cat.names <- c("Years_since_hire", "Calendar_year", "Age",
+X_cat.names <- c(
+	"Years_since_hire", "Age",
 	"Race", "Plant", "Sex", "Year_of_hire",
 	"Time_spent_machining", "Time_spent_off", "Cumulative_time_off",
 	"Cumulative_soluble_exposure",
@@ -26,7 +27,7 @@ X_cat.names <- c("Years_since_hire", "Calendar_year", "Age",
 	"Cumulative_synthetic_exposure",
 	"Employment_status")
 X.names <- c(
-	"sincehire.years", "year", "age",
+	"sincehire.years", "age",
 	"yin16",
 	"machining", "off", "cumulative_off",
 	"cum_soluble",
@@ -77,10 +78,10 @@ sl.library <- c("sl", "mean",
 								# "ridge", # Not possible for binomial
 								"gam", # continuous
 								# "loess", # Not possible for binomial
-								"earth", # continuous
+								# "earth", # continuous # very long computation
 								"ranger", # categorical
 								"knn", # continuous, else too many ties
-								"ksvm", # continous, else vector memory exausted
+								# "ksvm", # continous, else vector memory exausted
 								# "svm", # Infeasible
 								"rpart", "rpartPrune", # categorical
 								# "xgboost" # categorical # very long computation time
