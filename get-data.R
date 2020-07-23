@@ -98,6 +98,7 @@ if ("Age" %in% names(cohort_analytic)) {
 	cohort_analytic <- cohort_analytic[,-"Age", with = F]}
 if ("Time_spent_machining" %in% names(cohort_analytic)) {
 	cohort_analytic <- cohort_analytic[, -c(
+		"Duration_of_employment",
 		"Years_since_hire",
 		"Calendar_year",
 		"Time_spent_in_assembly",
@@ -108,8 +109,7 @@ if ("Time_spent_machining" %in% names(cohort_analytic)) {
 		"Cumulative_soluble_exposure",
 		"Cumulative_straight_exposure",
 		"Cumulative_synthetic_exposure",
-		"Employment_status",
-		"Duration_of_employment"
+		"Employment_status"
 	), with = F]
 }
 

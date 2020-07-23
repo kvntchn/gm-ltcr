@@ -21,23 +21,23 @@ source(here::here('get-data.R'))
 setorder(cohort_analytic, studyno, year)
 
 # Drop unnecessary variables and take subset for fast testing
-# Categorically-coded variables only
+# Variables to use
 X.names <- c(
 	"Duration_of_employment",
-	"Calendar_year", "Age.exp",
+	"Calendar_year",
+	"Age",
 	"Race", "Plant", "Sex",
-	"Year_of_hire",
 	"Cumulative_time_off",
+	"Year_of_hire",
 	"Cumulative_soluble_exposure",
 	"Cumulative_straight_exposure",
 	"Cumulative_synthetic_exposure",
 	"Employment_status")
-# Continuous and categorical variables
 X_continuous.names <- c(
-	"employment.years", "year", "age",
-	"Race", "Plant", "Sex",
-	"yin16",
+	"employment.years", "year",
+	"age",
 	"cumulative_off",
+	"yin16",
 	"cum_soluble",
 	"cum_straight",
 	"cum_synthetic",
@@ -48,36 +48,18 @@ col.names <- unique(c(
 	X.names, X_continuous.names
 ))
 
-set.seed(236)
+set.seed(242)
 studyno.sample <- sample(unique(cohort_analytic$studyno), 2000)
 cohort_select <- cohort_analytic[
 	# studyno %in% studyno.sample
 	, col.names, with = F]
 
-# Check data characteristics
-str(cohort_select)
-
-# # One-hot encoding? ####
-# col.is_long_factor <- sapply(cohort_select, function(x) {is.factor(x) & length(levels(x)) > 2})
-# one_hot <- sapply(which(col.is_long_factor), function(i) {
-# 	one_hot <- as.data.table(model.matrix(~ . - 1, cohort_select[, i, with = F]))
-# 	return(one_hot)
-# })
-# 
-# # cbind it up!
-# one_hot.bind <- function(x) {
-# 	x[[2]] <- cbind(x[[1]], x[[2]])
-# 	x <- x[-1]
-# 	if (length(x) > 1) {
-# 		one_hot.bind(x)
-# 	} else {
-# 		return(x[[1]])
-# 	}}
-# 
-# cohort_select <- cbind(cohort_select[,!col.is_long_factor, with = F], one_hot.bind(one_hot))
+sapply(X.names, function(x) {
+	if (x == "Age.exp") {x <- "Age"}
+	table(cohort_select[y == 1, x, with = F])
+}, simplify = F)
 
 # sl3 pipeline ####
-
 # Make sure predict.gam returns "response"
 Lrnr_gam$private_methods$.predict <- function (task) {
 	predictions <- stats::predict(private$.fit_object, newdata = task$X, type = "response")
@@ -89,8 +71,7 @@ Lrnr_gam$private_methods$.predict <- function (task) {
 task <- make_sl3_Task(as.data.frame(cohort_select),
 											covariates = X.names,
 											outcome = "y",
-											outcome_type = "binomial",
-											id = "studyno")
+											outcome_type = "binomial")
 
 # Make learners
 sl.library <- c("sl", "mean",
@@ -119,19 +100,14 @@ sapply(sl.library[-1], function(x = "rpart") {
 				 envir = .GlobalEnv)
 })
 
-# Run and check system time
-sapply(sl.library[-1], function(x) {
-	system.time(
-	assign(paste0("lrnr_", x, "_fit"),
-				 get(paste0("lrnr_", x))$train(task),
-				 envir = .GlobalEnv),
-	F)
-})
-
-# verify that the learner is fit
-sapply(sl.library[-1], function(x) {
-				 get(paste0("lrnr_", x, "_fit"))$is_trained
-})
+# # Run and check system time
+# sapply(sl.library[-1], function(x) {
+# 	system.time(
+# 	assign(paste0("lrnr_", x, "_fit"),
+# 				 get(paste0("lrnr_", x))$train(task),
+# 				 envir = .GlobalEnv),
+# 	F)
+# })
 
 # No screening for now, just stacking
 stack <- make_learner(Stack,
@@ -139,11 +115,14 @@ stack <- make_learner(Stack,
 												get(paste0("lrnr_", x))
 												}))
 
-stack_fit <- stack$train(task)
+# stack_fit <- stack$train(task)
 
 # Cross-validation
 cv_stack <- Lrnr_cv$new(stack)
 cv_fit <- cv_stack$train(task)
+cv_preds <- cv_fit$predict(task)
+# Save CV stack results
+saveRDS(cv_preds, file = to_drive_D(here::here("resources", "cv_preds.rds")))
 
 # Super Learner
 metalearner <- make_learner(Lrnr_nnls)
@@ -152,15 +131,16 @@ ml_fit <- metalearner$train(cv_task)
 
 sl_pipeline <- make_learner(Pipeline, stack_fit, ml_fit)
 sl_preds <- sl_pipeline$predict()
+# Save sl results #
+saveRDS(sl_preds, file = to_drive_D(here::here("resources", "sl_preds.rds")))
 
-# Save sl3 results ####
-saveRDS(sl_preds, file = to_drive_D(here::here("resources", "sl_preds.rdata")))
+# # Load sl3 results
+# sl_preds <- readRDS(file = to_drive_D(here::here("resources", "sl_preds.rds")))
+# cv_preds <- readRDS(file = to_drive_D(here::here("resources", "cv_preds.rds")))
 
 sl.predict <- data.table(
 	sl = sl_preds,
-	sapply(sl.library[-1], function(x) {
-				 get(paste0("lrnr_", x, "_fit"))$predict()
-})
+	sapply(cv_preds, function(x) {x})
 	)
 
 # # Basic implementation ####
@@ -176,9 +156,9 @@ sl.predict <- data.table(
 # 	cvControl = list(V = 10)
 # 	# parallel = "multicore"
 # 	)
-# # Save SuperLearner results ####
-# saveRDS(sl, file = to_drive_D(here::here("resources", "sl.rdata")))
-# sl <- readRDS(file = to_drive_D(here::here("resources", "sl.rdata")))
+# # # Save SuperLearner results ####
+# # saveRDS(sl, file = to_drive_D(here::here("resources", "sl.rds")))
+# # sl <- readRDS(file = to_drive_D(here::here("resources", "sl.rds")))
 # 
 # # Get predictions
 # sl.predict <- as.data.table(
@@ -187,31 +167,36 @@ sl.predict <- data.table(
 # 	sl$library.predict)
 # 	)
 # names(sl.predict) <- gsub("2_All$|^SL.", "", names(sl.predict))
-# 
-# box_save(sl.predict,
-# 				 dir_id = 117568282871,
-# 				 file_name = paste0("sl.predict.rdata"),
-# 				 description = "Predicted values from Super Learner")
+# # 
+# # box_save(sl.predict,
+# # 				 dir_id = 117568282871,
+# # 				 file_name = paste0("sl.predict.rdata"),
+# # 				 description = "Predicted values from Super Learner")
 
 # Probability of being alive ####
 # (1 - Pr(subject died at t = 1)) * (1 - Pr(subject died at t = 2)) * ... * (1 - Pr(subject died at t = t))
+# Fitted values
 cohort_select[, (paste0(sl.library, ".fitted")):=(
 	lapply(sl.predict, function(x) {x})
 )]
+# Cumulative products of the complements (survival)
 cohort_select[, (paste0(sl.library, ".prob")):=(
-	lapply(sl.predict, function(x) {
-		cumprod(1 - x)})
-)]
+	lapply(paste0(sl.library, ".fitted"), function(preds) {
+		cumprod(1 - get(preds))})
+), by = .(studyno)]
+# Get ready for aggregating across year
 cohort_select[,`:=`(
 	I = 1:(.N),
 	N = .N,
 	mortality = as.numeric(max(y) > 0)),
 	by = .(studyno)]
+
+# Individual-specific
 prob.tab <- cohort_select[I == N, c(
 	"studyno", "year",
 	paste0(sl.library, ".prob"),
 	"mortality",
-	"Age", "Year_of_hire", "Race", "Sex",
+	"Age", "Year_of_hire", "Race", "Plant", "Sex",
 	"Cumulative_time_off",
 	"Cumulative_straight_exposure",
 	"Cumulative_soluble_exposure",
@@ -221,15 +206,16 @@ prob.tab <- cohort_select[I == N, c(
 names(prob.tab) <- gsub(" exposure$", "", gsub("_", " ", names(prob.tab)))
 
 # Probabilities by stratum ####
-for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire", paste("Cumulative", c("straight", "soluble", "synthetic")))) {
+for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire",
+										paste("Cumulative", c("straight", "soluble", "synthetic")))) {
 	tmp.tab <- prob.tab[mortality == 0, .(
 		`sl` = mean(sl.prob),
 		`mean` = mean(mean.prob),
-		`glm` = mean(glm.prob),
+		`glm` = mean(glm.prob)
 		# `glmnet` = mean(glmnet.prob),
-		`gam` = mean(gam.prob),
-		`ranger` = mean(ranger.prob),
-		`xgboost` = mean(xgboost.prob)
+		# `gam` = mean(gam.prob),
+		# `ranger` = mean(ranger.prob),
+		# `xgboost` = mean(xgboost.prob)
 	), by = .(get(covariate))][order(get),]
 	names(tmp.tab)[1] <- covariate
 	# box_save(
@@ -252,7 +238,8 @@ library(pROC)
 for (method in sl.library) {
 	assign(paste0(method, ".roc"),
 				 roc(prob.tab[,.(mortality, p = 1 - get(paste0(method, ".prob")))],
-				 		mortality, p, ci = T))}
+				 		mortality, p, ci = T))
+	}
 
 # Plot
 roc.ggtab <- rbindlist(lapply(sl.library, function (method) {
@@ -267,11 +254,11 @@ roc.ggtab <- rbindlist(lapply(sl.library, function (method) {
 setDT(roc.ggtab)
 
 roc.ggtab[,`:=`(AUC = factor(AUC, sort(as.numeric(unique(AUC)), T)))]
-pair <- roc.ggtab[,.(AUC = AUC[1]), by = .(method)][order(AUC),]
+pair <- roc.ggtab[,.(AUC = paste0(AUC[1])), by = .(method)][order(AUC),]
+
 roc.ggtab[,`:=`(
-	method = factor(method, pair$method, paste0(pair$method, " (AUC = ", pair$AUC, ")"))
-	# AUC = factor(
-	# 	AUC, sort(unique(AUC)))
+	method = factor(method, pair$method),
+	AUC = factor(method, pair$method, pair$AUC)
 	)]
 
 box_save(
@@ -302,17 +289,19 @@ saveRDS(roc.threshold,
 
 # Thin out number of lines for ggplot
 n_i <- 40
-roc.ggtab[,`:=`(I = c(rep(1:n_i, length(Specificity) %/% n_i),
-											seq(1, length.out = length(Specificity) - length(Specificity) %/% n_i * n_i))
-)]
+roc.ggtab[,`:=`(I = c(
+	rep(1:n_i, .N %/% n_i),
+	seq(1, length.out = .N - .N %/% n_i * n_i))
+), by = .(method)]
 
 roc.ggtab[I == 1 | method == "mean"] %>% ggplot(aes(
 	x = Specificity, y = Sensitivity, color = method
 )) + geom_step(size = 0.5) +
 	geom_segment(x = -1, y = 0, xend = 0, yend = 1, color = "black", linetype = 2, size = 0.5) +
-	# geom_rect(aes(xmin = 0.5, xmax = 0.5, ymin = 0.5, ymax = 0.5, fill = AUC), alpha = 0) +
-	# guides(fill = guide_legend(
-	# 	override.aes = list(alpha = 1))) +
+	geom_rect(aes(xmin = 0.5, xmax = 0.5, ymin = 0.5, ymax = 0.5, fill = method), alpha = 0) +
+	scale_fill_discrete(name = "AUC", labels = pair$AUC) +
+	guides(fill = guide_legend(
+		override.aes = list(alpha = 1))) +
 	scale_x_reverse() + mytheme -> roc.ggplot
 
 roc.ggplot
@@ -320,48 +309,43 @@ roc.ggplot
 sapply(sl.library, function(method) {
 	get(paste0(method, ".roc"))$auc})
 
-sapply(X.names, function(x) {
-	if (x == "Age.exp") {x <- "Age"}
-	table(cohort_select[, x, with = F])
-}, simplify = F)
+# Compile plot
+library(tikzDevice)
+tikz(file = here::here("reports/survival to 1985/resources", "sl.roc.tex"),
+		 height = 3, width = 4.75, standAlone = T)
+roc.ggplot
+dev.off()
 
-# # Compile plot
-# library(tikzDevice)
-# tikz(file = here::here("reports/survival to 1985/resources", "sl.roc.tex"),
-# 		 height = 3, width = 4.75, standAlone = T)
-# roc.ggplot
-# dev.off()
+lualatex(pattern = "^sl\\.roc\\.tex",
+				 directory = here::here("reports/survival to 1985/resources"),
+				 break_after = 60)
+
+
+# # Look at the weights ####
+# weight.ggtab <- melt(prob.tab,
+# 		 id.vars = 1,
+# 		 measure = 2:5)[,.(
+# 		 	studyno,
+# 		 	method = substr(variable, 1,  unlist(gregexpr("\\.", variable)) - 1),
+# 		 	p = value
+# 		 )]
 # 
-# lualatex(pattern = "^sl\\.roc\\.tex",
-# 				 directory = here::here("reports/survival to 1985/resources"),
-# 				 break_after = 60)
-
-
-# Look at the weights ####
-weight.ggtab <- melt(prob.tab,
-		 id.vars = 1,
-		 measure = 2:5)[,.(
-		 	studyno,
-		 	method = substr(variable, 1,  unlist(gregexpr("\\.", variable)) - 1),
-		 	p = value
-		 )]
-
-# Truncate?
-weight.ggtab[,`:=`(
-	p = ifelse(p > quantile(p, 0.99), quantile(p, 0.99), p)
-), by = .(method)]
-
-weight.ggtab[,`:=`(
-	p.mean = mean(p)
-), by = .(method)]
-
-weight.ggtab[,`:=`(method = relevel(factor(method), "sl"))]
-
-weight.ggtab %>% ggplot(aes(
-	x = (1 - p.mean)/(1 - p)
-)) + geom_histogram(
-	# aes(y = ..density..),
-	bins = 500) +
-	# geom_density(color = "red") +
-	# coord_cartesian(xlim = c(0, 100)) +
-	facet_wrap(. ~ method) + mytheme.web
+# # Truncate?
+# weight.ggtab[,`:=`(
+# 	p = ifelse(p > quantile(p, 0.99), quantile(p, 0.99), p)
+# ), by = .(method)]
+# 
+# weight.ggtab[,`:=`(
+# 	p.mean = mean(p)
+# ), by = .(method)]
+# 
+# weight.ggtab[,`:=`(method = relevel(factor(method), "sl"))]
+# 
+# weight.ggtab %>% ggplot(aes(
+# 	x = (1 - p.mean)/(1 - p)
+# )) + geom_histogram(
+# 	# aes(y = ..density..),
+# 	bins = 500) +
+# 	# geom_density(color = "red") +
+# 	# coord_cartesian(xlim = c(0, 100)) +
+# 	facet_wrap(. ~ method) + mytheme.web
