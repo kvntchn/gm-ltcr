@@ -54,26 +54,13 @@ cohort_select <- cohort_analytic[
 	# studyno %in% studyno.sample
 	, col.names, with = F]
 
+# Get covariate levels
 sapply(X.names, function(x) {
-	if (x == "Age.exp") {x <- "Age"}
-	table(cohort_select[y == 1, x, with = F])
+	if (is.factor(cohort_select[, x, with = F])) {
+	table(cohort_select[y == 1, x, with = F])}
 }, simplify = F)
 
-# sl3 pipeline ####
-# Make sure predict.gam returns "response"
-Lrnr_gam$private_methods$.predict <- function (task) {
-	predictions <- stats::predict(private$.fit_object, newdata = task$X, type = "response")
-	predictions <- as.numeric(predictions)
-	return(predictions)
-}
-
-# Instantiate task
-task <- make_sl3_Task(as.data.frame(cohort_select),
-											covariates = X.names,
-											outcome = "y",
-											outcome_type = "binomial")
-
-# Make learners
+# Choose library
 sl.library <- c("sl", "mean",
 								"glm",
 								# "glm.interaction",
@@ -88,59 +75,85 @@ sl.library <- c("sl", "mean",
 								NULL
 								)
 
-# Instantiate
-sapply(sl.library[-1], function(x = "rpart") {
-	assign(paste0("lrnr_", x),
-				 {if (sum(grepl(x, sl3_list_learners("binomial"))) > 0) {
-				 	make_learner(get(paste0("Lrnr_", x)))
-				 } else {
-				 	# Use SuperLearner package, if needed
-				 		make_learner(Lrnr_pkg_SuperLearner, paste0("SL.", x))}
-				 	},
-				 envir = .GlobalEnv)
-})
-
-# # Run and check system time
-# sapply(sl.library[-1], function(x) {
-# 	system.time(
-# 	assign(paste0("lrnr_", x, "_fit"),
-# 				 get(paste0("lrnr_", x))$train(task),
-# 				 envir = .GlobalEnv),
-# 	F)
+# # sl3 pipeline ####
+# # Make sure predict.gam returns "response"
+# Lrnr_gam$private_methods$.predict <- function (task) {
+# 	predictions <- stats::predict(private$.fit_object, newdata = task$X, type = "response")
+# 	predictions <- as.numeric(predictions)
+# 	return(predictions)
+# }
+# 
+# # Instantiate task
+# task <- make_sl3_Task(as.data.frame(cohort_select),
+# 											covariates = X.names,
+# 											outcome = "y",
+# 											outcome_type = "binomial")
+# 
+# # Make learners
+# 
+# # Instantiate
+# sapply(sl.library[-1], function(x = "rpart") {
+# 	assign(paste0("lrnr_", x),
+# 				 {if (sum(grepl(x, sl3_list_learners("binomial"))) > 0) {
+# 				 	make_learner(get(paste0("Lrnr_", x)))
+# 				 } else {
+# 				 	# Use SuperLearner package, if needed
+# 				 		make_learner(Lrnr_pkg_SuperLearner, paste0("SL.", x))}
+# 				 	},
+# 				 envir = .GlobalEnv)
 # })
-
-# No screening for now, just stacking
-stack <- make_learner(Stack,
-											sapply(sl.library[-1], function(x) {
-												get(paste0("lrnr_", x))
-												}))
-
+# 
+# # # Run and check system time
+# # sapply(sl.library[-1], function(x) {
+# # 	system.time(
+# # 	assign(paste0("lrnr_", x, "_fit"),
+# # 				 get(paste0("lrnr_", x))$train(task),
+# # 				 envir = .GlobalEnv),
+# # 	F)
+# # })
+# 
+# # No screening for now, just stacking
+# stack <- make_learner(Stack,
+# 											sapply(sl.library[-1], function(x) {
+# 												get(paste0("lrnr_", x))
+# 												}))
 # stack_fit <- stack$train(task)
-
-# Cross-validation
-cv_stack <- Lrnr_cv$new(stack)
-cv_fit <- cv_stack$train(task)
-cv_preds <- cv_fit$predict(task)
-# Save CV stack results
-saveRDS(cv_preds, file = to_drive_D(here::here("resources", "cv_preds.rds")))
-
-# Super Learner
-metalearner <- make_learner(Lrnr_nnls)
-cv_task <- cv_fit$chain(task)
-ml_fit <- metalearner$train(cv_task)
-
-sl_pipeline <- make_learner(Pipeline, stack_fit, ml_fit)
-sl_preds <- sl_pipeline$predict()
-# Save sl results #
-saveRDS(sl_preds, file = to_drive_D(here::here("resources", "sl_preds.rds")))
+# stack_preds <- stack_fit$predict(task)
+# # Save stack results
+# saveRDS(stack_preds, file = to_drive_D(here::here("resources", "stack_preds.rds")))
+# 
+# # Cross-validation
+# cv_stack <- Lrnr_cv$new(stack)
+# cv_fit <- cv_stack$train(task)
+# cv_preds <- cv_fit$predict(task)
+# # Save CV stack results
+# saveRDS(cv_preds, file = to_drive_D(here::here("resources", "cv_preds.rds")))
+# cv_risks <- cv_fit$cv_risk(loss_squared_error)
+# saveRDS(cv_risks, file = to_drive_D(here::here("resources", "cv_risks.rds")))
+# 
+# # Super Learner
+# metalearner <- make_learner(Lrnr_nnls)
+# cv_task <- cv_fit$chain(task)
+# ml_fit <- metalearner$train(cv_task)
+# 
+# sl_pipeline <- make_learner(Pipeline, stack_fit, ml_fit)
+# sl_weights <- sl_pipeline$learner_fits
+# # Save learner fits #
+# saveRDS(sl_weights, file = to_drive_D(here::here("resources", "sl_weights.rds")))
+# sl_preds <- sl_pipeline$predict()
+# # Save sl results #
+# saveRDS(sl_preds, file = to_drive_D(here::here("resources", "sl_preds.rds")))
 
 # # Load sl3 results
 # sl_preds <- readRDS(file = to_drive_D(here::here("resources", "sl_preds.rds")))
+# sl_weights <- readRDS(file = to_drive_D(here::here("resources", "sl_weights.rds")))
+# stack_preds <- readRDS(file = to_drive_D(here::here("resources", "stack_preds.rds")))
 # cv_preds <- readRDS(file = to_drive_D(here::here("resources", "cv_preds.rds")))
+# cv_risks <- readRDS(file = to_drive_D(here::here("resources", "cv_risks.rds")))
 
 sl.predict <- data.table(
 	sl = sl_preds,
-	sapply(cv_preds, function(x) {x})
+	sapply(stack_preds, function(x) {x})
 	)
 
 # # Basic implementation ####
@@ -167,11 +180,12 @@ sl.predict <- data.table(
 # 	sl$library.predict)
 # 	)
 # names(sl.predict) <- gsub("2_All$|^SL.", "", names(sl.predict))
-# # 
-# # box_save(sl.predict,
-# # 				 dir_id = 117568282871,
-# # 				 file_name = paste0("sl.predict.rdata"),
-# # 				 description = "Predicted values from Super Learner")
+
+# Save SL fitted values to Box
+box_save(sl.predict,
+				 dir_id = 117568282871,
+				 file_name = paste0("sl.predict.rdata"),
+				 description = "Predicted values from Super Learner")
 
 # Probability of being alive ####
 # (1 - Pr(subject died at t = 1)) * (1 - Pr(subject died at t = 2)) * ... * (1 - Pr(subject died at t = t))
@@ -211,11 +225,11 @@ for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire",
 	tmp.tab <- prob.tab[mortality == 0, .(
 		`sl` = mean(sl.prob),
 		`mean` = mean(mean.prob),
-		`glm` = mean(glm.prob)
-		# `glmnet` = mean(glmnet.prob),
-		# `gam` = mean(gam.prob),
-		# `ranger` = mean(ranger.prob),
-		# `xgboost` = mean(xgboost.prob)
+		`glm` = mean(glm.prob),
+		`glmnet` = mean(glmnet.prob),
+		`gam` = mean(gam.prob),
+		`ranger` = mean(ranger.prob),
+		`xgboost` = mean(xgboost.prob)
 	), by = .(get(covariate))][order(get),]
 	names(tmp.tab)[1] <- covariate
 	# box_save(
@@ -283,9 +297,7 @@ roc.threshold <- roc.ggtab[, .(
 	threshold.max = max(threshold[is.finite(threshold)])
 	), by = .(method)]
 
-saveRDS(roc.threshold,
-				file = here::here("resources",
-													"roc.threshold.rds"))
+saveRDS(roc.threshold, file = here::here("resources", "roc.threshold.rds"))
 
 # Thin out number of lines for ggplot
 n_i <- 40
@@ -302,24 +314,26 @@ roc.ggtab[I == 1 | method == "mean"] %>% ggplot(aes(
 	scale_fill_discrete(name = "AUC", labels = pair$AUC) +
 	guides(fill = guide_legend(
 		override.aes = list(alpha = 1))) +
-	scale_x_reverse() + mytheme -> roc.ggplot
+	scale_x_reverse() + mytheme +
+	theme(
+		legend.box = "horizontal"
+	) -> roc.ggplot
 
 roc.ggplot
 
-sapply(sl.library, function(method) {
-	get(paste0(method, ".roc"))$auc})
+sort(sapply(sl.library, function(method) {
+	get(paste0(method, ".roc"))$auc}))
 
 # Compile plot
 library(tikzDevice)
 tikz(file = here::here("reports/survival to 1985/resources", "sl.roc.tex"),
-		 height = 3, width = 4.75, standAlone = T)
+		 height = 3, width = 5, standAlone = T)
 roc.ggplot
 dev.off()
 
 lualatex(pattern = "^sl\\.roc\\.tex",
 				 directory = here::here("reports/survival to 1985/resources"),
-				 break_after = 60)
-
+				 break_after = 120)
 
 # # Look at the weights ####
 # weight.ggtab <- melt(prob.tab,
