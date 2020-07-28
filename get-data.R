@@ -6,7 +6,7 @@
 library(here)
 
 if (!('cohort' %in% ls(envir = .GlobalEnv))) {
-source(here::here('../gm-wrangling/wrangling', '00-Hello.R'))
+	source(here::here('../gm-wrangling/wrangling', '00-Hello.R'))
 }
 
 # Get person-year dataset ####
@@ -20,7 +20,7 @@ if (!"cohort_analytic" %in% ls()) {
 		hire.year.min = 1938
 	)
 	setorder(cohort_analytic, studyno, year)
-
+	
 	# Drop unnecessary data ####
 	cohort_analytic <- cohort_analytic[
 		year <= 1984 &
@@ -28,7 +28,7 @@ if (!"cohort_analytic" %in% ls()) {
 			right.censored == 0 &
 			yin >= as.Date("1938-01-01") &
 			yin < as.Date("1983-01-01"),]
-
+	
 	# Indicator for at work or not
 	cohort_analytic[year <= year(yout), `:=`(`At work` = 1)]
 	cohort_analytic[year > year(yout), `:=`(`At work` = 0)]
@@ -52,20 +52,20 @@ if (!"cohort_analytic" %in% ls()) {
 		off.gan = 0,
 		off.han = 0,
 		off.san = 0)]
-
+	
 	# years since hire variable
 	cohort_analytic[,`:=`(sincehire.years = 1:.N + 3), by = .(studyno)]
-
+	
 	# pretty yin
 	cohort_analytic[,`:=`(yin16 = yin16 + 1900)]
-
+	
 	# Clean up work history variables
 	cohort_analytic[, `:=`(
 		off = apply(data.frame(off.gan + off.han + off.san, 1), 1, min),
 		machining = apply(data.frame(machining.gan + machining.han + machining.san, 1), 1, min),
 		assembly = apply(data.frame(assembly.gan + assembly.han + assembly.san, 1), 1, min)
 	)]
-
+	
 	# Fill in for years 1993 and 1994 and get cumulative off
 	cohort_analytic[, `:=`(
 		off = zoo::na.locf(off),
@@ -73,7 +73,7 @@ if (!"cohort_analytic" %in% ls()) {
 		assembly = zoo::na.locf(assembly),
 		cumulative_off = cumsum(zoo::na.locf(off))
 	), by = .(studyno)]
-
+	
 	# outcome variable
 	cohort_analytic[, y := `All natural causes`]
 }
@@ -81,17 +81,15 @@ if (!"cohort_analytic" %in% ls()) {
 length(table(cohort_analytic$studyno)); sum(cohort_analytic$y)
 
 # Make categorical variables ####
-# probs <- seq(0, 1, 0.25)
-# probs <- seq(0, 1, 1/3)
 categorize.cols <- c(
 	"employment.years", "sincehire.years", "year", "age",
 	"assembly", "machining", "off", "cumulative_off",
 	"yin16", "cum_soluble", "cum_straight", "cum_synthetic")
 probs <- sapply(categorize.cols, function(x) {
-	if (x == "year") {seq(0, 1, 1/10)} else if (
-		x %in% paste0("cum_", c("soluble", "straight", "synthetic"))) {
-		c(0, 2/3, 3/4, 1)
-	} else {seq(0, 1, 1/4)}
+	# if (x %in% paste0("cum_", c("soluble", "straight", "synthetic"))) {
+	# 	c(0, 2/3, 3/4, 1)
+	# } else {seq(0, 1, 1/4)}
+	seq(0, 1, 1/10)
 }, simplify = F)
 
 if ("Age" %in% names(cohort_analytic)) {
@@ -135,25 +133,27 @@ cohort_analytic[,`:=`(
 # cohort_analytic[year > year(yout), .(year, Duration_of_employment, yin, yout), by = .(studyno)]
 
 covariate.quantile <- sapply(categorize.cols, function(categorize.col = categorize.cols[1]) {
-		x <- cohort_analytic[, categorize.col, with = F]
-		quantile.tmp <- quantile(unlist(x[cohort_analytic$y == 1]), unlist(probs[categorize.col]))
-		if (quantile.tmp[1] == quantile.tmp[2] &
-				quantile.tmp[1] == 0) {
-			quantile.tmp[1] <- -Inf} else {
-					quantile.tmp[1] <- min(x)
-			}
-		if (categorize.col %in% c("cumulative_off", "cum_soluble", "cum_straight", "cum_synthetic")) {
-			quantile.tmp <- c(-Inf, 0, quantile.tmp)
+	x <- cohort_analytic[, categorize.col, with = F]
+	quantile.tmp <- quantile(unlist(x[cohort_analytic$y == 1]), unlist(probs[categorize.col]))
+	if (quantile.tmp[1] == quantile.tmp[2] &
+			quantile.tmp[1] == 0) {
+		quantile.tmp[1] <- -Inf} else {
+			quantile.tmp[1] <- min(x)
 		}
-		quantile.tmp[length(quantile.tmp)] <- max(x)
-		return(sort(quantile.tmp))
-	}, simplify = F)
+	if (categorize.col %in% c("cumulative_off", "cum_soluble", "cum_straight", "cum_synthetic")) {
+		quantile.tmp <- c(-Inf, 0, quantile.tmp)
+	}
+	quantile.tmp[length(quantile.tmp)] <- max(x)
+	return(sort(quantile.tmp))
+}, simplify = F)
 
 # Human-specified cutpoints
 # Keeping 1st and last, but changing middle cutpoints
 change.middle <- function(var.name, ...) {
 	sort(c(..., covariate.quantile[[var.name]][c(1, length(covariate.quantile[[var.name]]))]))
 }
+
+covariate.quantile$year <- change.middle("year", 1970, 1980)
 covariate.quantile$age <- change.middle('age', 55, 70)
 covariate.quantile$yin16  <- change.middle("yin16", 1945, 1960)
 covariate.quantile$employment.years <- change.middle("employment.years", 10, 20)
