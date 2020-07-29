@@ -153,11 +153,13 @@ change.middle <- function(var.name, ...) {
 	sort(c(..., covariate.quantile[[var.name]][c(1, length(covariate.quantile[[var.name]]))]))
 }
 
-covariate.quantile$year <- change.middle("year", 1970, 1980)
-covariate.quantile$age <- change.middle('age', 55, 70)
-covariate.quantile$yin16  <- change.middle("yin16", 1945, 1960)
-covariate.quantile$employment.years <- change.middle("employment.years", 10, 20)
-covariate.quantile$cumulative_off <- change.middle("cumulative_off", 0, 1)
+if (length(table(sapply(probs, length))) != 1) {
+	covariate.quantile$year <- change.middle("year", 1970, 1980)
+	covariate.quantile$age <- change.middle('age', 55, 70)
+	covariate.quantile$yin16  <- change.middle("yin16", 1945, 1960)
+	covariate.quantile$employment.years <- change.middle("employment.years", 10, 20)
+	covariate.quantile$cumulative_off <- change.middle("cumulative_off", 0, 1)
+}
 
 cohort_analytic[,(c(
 	"Duration_of_employment",
