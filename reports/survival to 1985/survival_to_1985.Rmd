@@ -178,34 +178,49 @@ weights.year.min <- 1941
 # Average survival probabilities by age group
 
 ```{r}
-for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire",
-										paste("Cumulative", c("straight", "soluble", "synthetic")))) {
-	tmp <- readRDS(
-				 	file = here::here("resources", paste0("survival_by-", gsub(" ", "-" , covariate), ".rds"))
-				 )
-	
-	if (sum(grepl("\\]", unlist(tmp[,1]))) > 0) {
-	tmp[,(covariate) := paste0("$", get(covariate), "$")]
+for (deciles in c("_by-deciles", "")) {
+	for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire",
+											paste("Cumulative", c("straight", "soluble", "synthetic")))) {
+		tmp <- readRDS(
+			file = here::here("resources/survival by covariate", paste0(gsub(" ", "-" , covariate), deciles, ".rds"))
+		)
+		
+		if (sum(grepl("\\]", unlist(tmp[,1]))) > 0) {
+			tmp[,(covariate) := paste0("$", get(covariate), "$")]
 		}
-	
-	assign(paste0(gsub(" ", "_" , tolower(covariate)), ".prob.tab"),
-				 tmp,
-				 envir = .GlobalEnv)
-}
+		
+		assign(paste0(gsub(" ", "_" , tolower(covariate)), gsub("-", "_", deciles), ".prob.tab"),
+					 tmp,
+					 envir = .GlobalEnv)
+	}}
 
-bytimevarying.tab <- rbindlist(list(
-	age.prob.tab,
-	employment_status.prob.tab), idcol = "Covariate", use.names = F)
+bytimevarying.tab <- list(
+	rbindlist(list(
+		age.prob.tab,
+		employment_status.prob.tab), idcol = "Covariate", use.names = F),
+	rbindlist(list(
+		age_by_deciles.prob.tab,
+		employment_status_by_deciles.prob.tab), idcol = "Covariate", use.names = F)
+)
 
-names(bytimevarying.tab)[2] <- "level"
+names(bytimevarying.tab[[1]])[2] <- "level"
+names(bytimevarying.tab[[2]])[2] <- "level"
 
-bytimevarying.tab[,`:=`(Covariate = {
+bytimevarying.tab[[1]][,`:=`(Covariate = {
 	tmp <- factor(Covariate, 1:2, c("Age", "Employment status"))
 	tmp <- levels(tmp)[as.numeric(tmp)]
 	tmp[duplicated(tmp)] <- ""
 	tmp
-	},
-	level = gsub(",", ", ", level))]
+},
+level = gsub(",", ", ", level))]
+
+bytimevarying.tab[[2]][,`:=`(Covariate = {
+	tmp <- factor(Covariate, 1:2, c("Age", "Employment status"))
+	tmp <- levels(tmp)[as.numeric(tmp)]
+	tmp[duplicated(tmp)] <- ""
+	tmp
+},
+level = gsub(",", ", ", level))]
 
 ```
 
@@ -214,6 +229,17 @@ bytimevarying.tab[,`:=`(Covariate = {
 \centering
 ```{r}
 xtable(age.prob.tab)
+```
+\end{adjustbox}
+\end{table}
+
+# Average survival probabilities by age group (deciles)
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+xtable(age_by_deciles.prob.tab)
 ```
 \end{adjustbox}
 \end{table}
@@ -235,6 +261,22 @@ sapply(paste0(c("race", "sex", "year_of_hire", "employment_status"), ".prob.tab"
 			 }))
 ```
 
+# Average survival probabilities by other covariates (deciles)
+
+```{r}
+invisible(
+sapply(paste0(c("year_of_hire"), "_by_deciles.prob.tab"),
+			 function(tab) {
+			 	cat(paste0("\\begin{table}[H]\n",
+					 "\\begin{adjustbox}{scale=0.75}\n",
+					 # "\\centering",
+					 NULL
+					 ))
+			 	print.xtable(xtable(get(tab)))
+			 	cat(paste0("\\end{adjustbox}",
+			 						 "\\end{table}\n\n"))
+			 }))
+```
 
 # Average survival probabilities by MWF exposure
 
@@ -242,30 +284,54 @@ sapply(paste0(c("race", "sex", "year_of_hire", "employment_status"), ".prob.tab"
 \begin{adjustbox}{scale=0.75}
 \centering
 ```{r}
-bymwf.tab <- rbindlist(list(
-	cumulative_straight.prob.tab, cumulative_soluble.prob.tab, cumulative_synthetic.prob.tab), idcol = "Cumulative exposure", use.names = F)
-
-names(bymwf.tab)[2] <- "level"
-
-bymwf.tab[,`:=`(`Cumulative exposure` = {
-	tmp <- factor(`Cumulative exposure`, 1:3, c("Straight", "Soluble", "Synthetic"))
-	tmp <- levels(tmp)[as.numeric(tmp)]
-	# tmp[duplicated(tmp)] <- NA
-	tmp
-	},
-	level = gsub(",", ", ", level))]
-
-bymwf.tab <- rbindlist(lapply(unique(bymwf.tab$`Cumulative exposure`), function (x) {
+bymwf.tab <- lapply(c("", "_by_deciles"), function(deciles) {
 	rbindlist(list(
-		data.table(level = paste0("\\multicolumn{2}{l}{", x, "}\\\\\n%")),
-		bymwf.tab[`Cumulative exposure` == x, -1, with = F]),
-		fill = T)
-}))
+		get(paste0("cumulative_straight", deciles, ".prob.tab")),
+		get(paste0("cumulative_soluble", deciles, ".prob.tab")),
+		get(paste0("cumulative_synthetic", deciles, ".prob.tab"))),
+		idcol = "idcol", use.names = F)})
 
-names(bymwf.tab)[1] <- "Cumulative exposure"
+for (i in 1:2) {
+	bymwf.tab[[i]][,`:=`(
+		idcol = factor(idcol, 1:3, c("Straight", "Soluble", "Synthetic"))
+	)]
+	
+	names(bymwf.tab[[i]])[2] <- "Cumulative exposure"
+	
+	bymwf.tab[[i]] <- rbindlist(lapply(c("Straight", "Soluble", "Synthetic"), function(mwf) {
+		rbindlist(list(data.table(
+			idcol = mwf,
+			"Cumulative exposure" = paste0("\\multicolumn{2}{l}{", mwf, "}\\\\\n%")),
+									 bymwf.tab[[i]][idcol == mwf]),
+							fill = T)
+	}))
+	
+}
 
-bymwf.tab %>% xtable(align = rep("r", ncol(.) + 1)) %>% print.xtable()
+bymwf.tab[[1]][,-1] %>% xtable(align = rep("r", ncol(.) + 1)) %>% print.xtable()
+```
+\end{adjustbox}
+\end{table}
 
+# Average survival probabilities by MWF exposure (deciles, as is possible)
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+bymwf.tab[[2]][idcol != "Synthetic"][,-1] %>% xtable(align = rep("r", ncol(.) + 1)) %>% print.xtable()
+```
+\end{adjustbox}
+\end{table}
+
+
+# Average survival probabilities by MWF exposure (deciles, as is possible)
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+bymwf.tab[[2]][idcol == "Synthetic"][,-1] %>% xtable(align = rep("r", ncol(.) + 1)) %>% print.xtable()
 ```
 \end{adjustbox}
 \end{table}
@@ -296,7 +362,7 @@ An individual's probability of not dying due to natural causes was calculated as
 \centering
 ```{r}
 roc.threshold <- readRDS(
-	file = here::here("resources", "roc.threshold.rds"))
+	file = here::here("resources/roc", "roc.threshold.rds"))
 
 names(roc.threshold) <- gsub("threshold\\.", "", names(roc.threshold))
 
@@ -304,3 +370,53 @@ roc.threshold %>% xtable(digits = 4) %>% print
 ```
 \end{adjustbox}
 \end{table}
+
+# ROC Curve (deciles)
+
+\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "sl.roc_by-deciles.pdf")`}
+
+\footnotesize
+
+Outcome: Natural cause mortality status in 1984
+
+An individual's probability of not dying due to natural causes was calculated as: $\prod_t(1 - \hat p_t)$ where $\hat p_t$ is the predicted probability of death due to natural causes for the $t^\text{th}$ year of follow-up.
+
+# ROC Thresholds (deciles)
+
+\begin{table}[H]
+\begin{adjustbox}{scale=0.75}
+\centering
+```{r}
+roc.threshold <- readRDS(
+	file = here::here("resources/roc", "roc.threshold_by-deciles.rds"))
+
+names(roc.threshold) <- gsub("threshold\\.", "", names(roc.threshold))
+
+roc.threshold %>% xtable(digits = 4) %>% print
+```
+\end{adjustbox}
+\end{table}
+
+#
+
+## Distribution of survival probabilities, truncated at the 95^th^ percentile
+
+\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "probs.pdf")`}
+
+#
+
+## Distribution of survival probabilities, truncated at the 95^th^ percentile (deciles)
+
+\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "probs_by-deciles.pdf")`}
+
+#
+
+## Distribution of stabilized weights, truncated at the 95^th^ percentile
+
+\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "weights.pdf")`}
+
+#
+
+## Distribution of stabilized weights, truncated at the 95^th^ percentile (deciles)
+
+\includegraphics[scale=0.85]{`r here::here("reports/survival to 1985/resources", "weights_by-deciles.pdf")`}
