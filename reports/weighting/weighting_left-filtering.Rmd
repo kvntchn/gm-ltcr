@@ -1,0 +1,147 @@
+---
+title: "UAW-GM Cohort Study"
+subtitle: "Left truncation"
+# fontsize: 10pt
+date: \today
+# mainfont: Arial
+# Windows only:
+# mainfontoptions: "Extension = .ttf, UprightFont = \\*, BoldFont = \\*bd, ItalicFont = \\*i, BoldItalicFont = \\*bi"
+output:
+  # pdf_document:
+  #   latex_engine: lualatex
+  #   includes:
+  #     in_header: "~/HeadRs/StatHead.sty"
+  #   number_sections: false
+  #   toc: false
+  #   keep_tex: true
+  # word_document:
+  #   reference_docx: "~/HeadRs/style-guide-arial-11.docx"
+  beamer_presentation:
+    toc: false
+    slide_level: 1
+    includes:
+      in_header: "~/HeadRs/BeamerHead.sty"
+    # incremental: true
+    latex_engine: lualatex
+bibliography: "../../../../Box Sync/papers/EnvEpi.bib"
+# csl: "C:/Users/kevchen/Documents/HeadRs/AMA.csl"
+# geometry: margin=2.54cm
+---
+
+```{r setup, include=F}
+# setwd('gm')
+knitr::opts_chunk$set(
+	echo = F,
+	# eval = F,
+	warning = F,
+	message = F,
+	fig.align = "center",
+	fig.pos = "H",
+	results = "asis")
+
+library(here); library(knitr); library(tidyverse); library(pander); library(xtable)
+library(data.table); library(lubridate); library(Hmisc);
+source("~/HeadRs/00-my-theme.R")
+
+table.engine <- "xtable"
+# table.engine <- "pander"
+
+weights.year.min <- 1941
+
+```
+
+# Motivation
+
+- Although FU for mortality starts in 1941, FU for cancer incidence does not start until 1985
+- The cohort in 1985 is the result of both selection and left censoring
+	- Left censoring: cancer incidence information is missing prior to 1985
+	- Selection: Person-time starting in 1985 not representative of person-time starting in 1941
+
+# Selection bias
+
+- Person-time after 1984 has undergone a period of selection where those most susceptible to cancer have either died or gotten cancer
+- Hence, if our analysis starts in 1985, then we need to down-weight individuals with low susceptibility and up-weight individuals with high susceptibility
+	- This can be done by inverse probability weighting
+
+# Pseudo-population by inverse probability weighting
+
+- __Main idea.__ Weight units by the inverse of their probability of selection/entry such that those in the study stand-in for those not in the study
+- __Example of use.__ In an analysis accounting for attrition due to death, @Weuve_2012 weighted units by the inverse of their estimated survival probability\footnote[frame]{Simplified for convenience.}
+	$$w_i = \frac{1}{\Prob{C = 1 \mid X_i}}$$
+	where $C = 1$ indicates that an individual was selected ie __in the cohort__ ie still alive, and $X$ are covariates used to predict selection
+
+# Review of IPW
+
+- IP weighting for selection bias is analogous to IP weighting for estimating counterfactual quantities
+- Let $X$ be covariates preceding election; $g(X) = \Prob{C = 1 \mid X}$ be the probability of selection given covariates $X$; and $Y$ be some outcome measured at a later time
+- Assume
+	- $C \indep Y_c \mid X$ for $c = 0, 1$ \hfill (strong ignorability)
+	- $0 < g(X) < 1$ \hfill (positivity)
+- Then $C \indep X \mid g(X)$ and
+\vspace{-0.25\baselineskip}
+$$\boxed{\E{Y_1} = \E{\frac{CY}{g(X)}}}\,, \hspace{2em} \E{Y_0} = \E{\frac{(1 - C)Y}{1 - g(X)}}$$
+
+<!-- # DAG -->
+
+<!-- \begin{center} -->
+<!-- \begin{tikzpicture}[node distance = 3cm] -->
+<!-- \tikzstyle{every state} = [draw = none] -->
+<!-- \node[state] (X) {$X$}; -->
+<!-- \node[state] (C) [draw = black, shape = rectangle, below right of = X] {$C$}; -->
+<!-- \node[state] (A) [right of = X, node distance = 3.1cm] {$X_{t > \text{1985}}$}; -->
+<!-- \node[state] (Y) [right of = C] {$Y$}; -->
+<!-- \node[state] (S) [below left of = C] {$S$}; -->
+<!-- \path[->] (X) edge (A); -->
+<!-- \path[->] (X) edge (C); -->
+<!-- \path[->] (C) edge (A); -->
+<!-- \path[->] (A) edge (Y); -->
+<!-- \path[->] (S) edge (C); -->
+<!-- \path[->] (S) edge [bend right = 25] (Y); -->
+<!-- \end{tikzpicture} -->
+<!-- \end{center} -->
+
+# Susceptibility and estimated mortality
+
+- @Weuve_2012 up-weighted those with a high estimated risk of death to account for those who died before a certain FU interval
+	- The validity of this strategy rests in the belief that the selection mechanism (mortality probability) is correctly modeled
+- It would be reasonable for us to follow the approach of @Weuve_2012 if we were able to model mortality status in 1985 as a function of past susceptibility to MWF
+	- Since we have no measure of susceptibility, we assume the extreme case that those with a high estimated risk of death survived _because_ they had low susceptibility
+- So, we can estimate $\Prob{C = 1 \mid X}$ using something like
+$$\alpha - \beta \hat S(1985 \mid X)$$
+where $\hat S(t)$ is the predicted survival through time $t$, and $(\alpha, \beta)$ is a set of sensitivity para
+
+# In other words,
+
+
+
+# Why does the inverse-weighted estimator work?
+
+\small
+\begingroup\addtolength{\jot}{.2em}
+$$\begin{aligned}
+\E{\frac{CY}{g(X)}} 
+& = \E{\frac{CY_1}{g(X)}} \\
+%\pause
+& = \mathbb E\, \E{\frac{C Y_1}{g(X)} \mid X} \\
+%\pause
+& = \E{ \frac{1}{g(X)} \E{C Y_1 \mid X} } \\
+%\pause
+& = \E{ \frac{\E{C \mid X}}{g(X)} \E{Y_1 \mid X} } \\
+%\pause
+& = \E{ \frac{\Prob{C = 1\mid X}}{g(X)} \E{Y_1 \mid X} } \\
+%\pause
+& = \E{ \frac{g(X)}{g(X)} \E{Y_1 \mid X} } \\
+%\pause
+& = \mathbb E\, \E{Y_1 \mid X} = \E{Y_1}
+\end{aligned}$$
+\endgroup
+
+# Notes
+
+- We believe that every subject in the 1985 cohort has undergone some selection process, so we have $C = 1$ for all
+	- This means we can only estimate $\E{Y_1}$ the expected value of the outcome when everyone had low enough susceptibility to have made it to 1985 (can do this in a MSM)
+- Weighting by $1 - g(X)$ rather than $1/g(X)$ would lead to a breakdown in the derivation shown above
+- In the @Weuve_2012 example, \vspace*{-0.2\baselineskip}$$\text{estimate } \Prob{C = 1 \mid X} \text{ with } \hat S(t_0 \mid X)$$
+- In our proposal, \vspace*{-0.2\baselineskip}$$\text{estimate } \Prob{C = 1 \mid X} \text{ with } 1 - \hat S(t_0 = 1985 \mid X)$$
+
+# Citations

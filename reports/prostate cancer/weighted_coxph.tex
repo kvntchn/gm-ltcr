@@ -1,41 +1,69 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
-\documentclass[10pt,]{article}
+\documentclass[
+  11pt,
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provides euro and other symbols
-\else % if luatex or xelatex
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
   \usepackage{unicode-math}
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-    \setmainfont[]{Arial}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage[]{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
-\usepackage{hyperref}
-\hypersetup{
-            pdftitle={Risk of incident prostate cancer risk, weighted by survival to 1985},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
-\usepackage[margin=3cm]{geometry}
-\usepackage{graphicx,grffile}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2.4cm, footskip=1cm]{geometry}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -44,457 +72,124 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-% set default figure placement to htbp
+% Set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
-\PassOptionsToPackage{no-math}{fontspec}
-
-%---------------------------------------------------------------------------
-% Kevin's style file
-%---------------------------------------------------------------------------
-\usepackage{ifxetex,ifluatex}
-
-%---------------------------------------------------------------------------
-% General
-%---------------------------------------------------------------------------
-
-% When testing
-% \usepackage{lipsum}
-
-% Line numbering
-\usepackage{lineno}
-
-% Usage
-	% \linenumbers
-	% \modulolinenumbers[2]
-	% \renewcommand\thelinenumber{\color{red}\Roman{linenumber}}
-	% \begin{linenumbers}  \end{linenumbers}
-
-
-\usepackage{setspace}
-%\doublespacing
-
-\usepackage{outlines}
-\usepackage{enumitem}
-\setenumerate[4]{label=\alph*).}
-
-\setlength\parindent{0pt} % Removes all indentation from paragraphs
-
-% \renewcommand{\thesection}{\Alph{section}} % Lettered, not numbered sections
-%\usepackage{sectsty} % Allows customizing section commands
-%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
-%\numberwithin{equation}{section} % Number equations within sections
-%\numberwithin{figure}{section} % Number figures within sections
-%\numberwithin{table}{section} % Number tables within sections
-
-
-\usepackage{multicol}
-\setlength{\columnsep}{15pt}
-\newlength\Colsep
-
-\usepackage{wrapfig}
-
-%---------------------------------------------------------------------------
-% Header/footer
-%---------------------------------------------------------------------------
-\usepackage{fancyhdr}
-\pagestyle{fancyplain}
-\fancyhead[L]{}
-\fancyhead[C]{}
-\fancyhead[R]{}
-% \fancyfoot[L]{}
-% \fancyfoot[C]{}
-% \fancyfoot[R]{\thepage}
-\renewcommand{\headrulewidth}{0pt}
-% \renewcommand{\footrulewidth}{0pt}
-% \setlength{\headheight}{15pt}
-
-%---------------------------------------------------------------------------
-% Tables, figures, images
-%---------------------------------------------------------------------------
-\usepackage{color}
-% \usepackage[usenames,dvipsnames]{xcolor}
-\usepackage{xparse}
-\usepackage{xhfill}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0
-% Requires pdfTeX
-\usepackage{linegoal}
-\fi
-
-\usepackage{longtable}
-\setlength{\LTcapwidth}{\textwidth}
-\usepackage{xtab, booktabs}
-\usepackage{multirow}
-\usepackage[flushleft]{threeparttable} % Suzanne's
-
-\usepackage{float} % Check code chunks section for floatrow
-
-\ifluatex
-% requires lualatex
-\usepackage{pgf}
-\fi
-\usepackage{tikz}% Probability trees and flow charts and the like
-\usetikzlibrary{
-graphs,
-arrows,
-automata
-%trees,
-%shapes,
-%decoration,
-%backgrounds,
-%petri
-}
-\ifluatex
-% requires lualatex
-\usetikzlibrary{graphdrawing}
-\fi
-
-\usepackage{graphicx}
-% \usepackage{grffile}
-% \usepackage{subcaption}
-% For tables and figures in parts %%%%
-\usepackage{caption}
-% \DeclareCaptionLabelFormat{cont}{#1~#2\alph{ContinuedFloat}}
-% \captionsetup[ContinuedFloat]{labelformat=cont}
-%\graphicspath{ {file.path.here} }
-
-% Set column widths in tabular environment!
-\usepackage{array}
-\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
-\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
-\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
-\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
-
-% STATA output for `estout` package
-\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-
-
-%---------------------------------------------------------------------------
-% Code chunks and color
-%---------------------------------------------------------------------------
-% \usepackage{cprotect}
-\usepackage{listings} % for code
-\usepackage{tcolorbox}
-\NewDocumentCommand{\framecolorbox}{oommm}
- {% #1 = width (optional)
-  % #2 = inner alignment (optional)
-  % #3 = frame color
-  % #4 = background color
-  % #5 = text
-  \IfValueTF{#1}
-   {\IfValueTF{#2}
-    {\fcolorbox{#3}{#4}{\makebox[#1][#2]{#5}}}
-    {\fcolorbox{#3}{#4}{\makebox[#1]{#5}}}%
-   }
-   {\fcolorbox{#3}{#4}{#5}}%
- }
-
-
-%\definecolor{codegreen}{rgb}{0,0.6,0}
-%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-%\definecolor{codepurple}{rgb}{0.58,0,0.82}
-%\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-%
-%\lstdefinestyle{mystyle}{
-%backgroundcolor=\color{backcolour},
-%commentstyle=\color{codegreen},
-%keywordstyle=\color{magenta},
-%numberstyle=\tiny\color{codegray},
-%stringstyle=\color{codepurple},
-%basicstyle=\footnotesize,
-%breakatwhitespace=false,
-%breaklines=true,
-%captionpos=b, keepspaces=true, numbers=left, numbersep=5pt, showspaces=false,
-%showstringspaces=false, showtabs=false, tabsize=2 }
-%
-%\lstset{style=mystyle}
-
-
-\usepackage{hyperref}
-\hypersetup{unicode=true,
-            pdfauthor={Kevin Chen},
-            pdfborder={0 0 0},
-            breaklinks=true}
-
-% Code chunk captions and references
-% \usepackage{floatrow} %interferes with float package
-% \floatsetup[figure]{capposition=top}
-% \floatsetup[table]{capposition=top}
-% \DeclareNewFloatType{chunk}{placement=H, fileext=chk, name=}
-% \captionsetup{options=chunk}
-% \renewcommand{\thechunk}{Chunk~\arabic{chunk}}
-% \makeatletter
-% \@addtoreset{chunk}{section}
-% \makeatother
-
-% Usage in R
-% library(knitr)
-% oldSource <- knit_hooks$get("source")
-% knit_hooks$set(source = function(x, options) {
-%   x <- oldSource(x, options)
-%   x <- ifelse(!is.null(options$ref), paste0("\\label{", options$ref,"}", x), x)
-%   ifelse(!is.null(options$codecap), paste0("\\captionof{chunk}{", options$codecap,"}", x), x)
-% })
-
-%---------------------------------------------------------------------------
-% Including R chunks (LaTex)
-%---------------------------------------------------------------------------
-
-\lstloadlanguages{R} % Load R syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{green}{rgb}{0,0.6,0}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
-\definecolor{maroon}{rgb}{0.3,0.1,0.9}
-\lstset{
-language=R,
-basicstyle=\scriptsize\ttfamily,
-commentstyle=\ttfamily\color{gray},
-numbers=left,
-numberstyle=\ttfamily\color{gray}\footnotesize,
-stepnumber=1,
-numbersep=5pt,
-backgroundcolor=\color{white},
-showspaces=false,
-showstringspaces=false,
-showtabs=false,
-frame=single,
-tabsize=2,
-captionpos=b,
-breaklines=true,
-breakatwhitespace=false,
-% title=\lstname,
-escapeinside={},
-keywordstyle=\ttfamily\color{green},
-stringstyle=\ttfamily\color{mauve},
-identifierstyle=\color{blue},
-morekeywords={}
-}
-
-% Usage
-	% For use in LaTex or Sweave:
-	% \lstinputlisting[language=R]{Script.R}
-
-%---------------------------------------------------------------------------
-% Typographical addendum
-%---------------------------------------------------------------------------
-% \usepackage{hologo}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-% TIPA (not compatible with fontspec)
-\usepackage{tipx}
-\fi
-\usepackage{marvosym,epsdice}
-\usepackage{physics}
-\usepackage{amsmath,amsfonts,amsthm,amssymb}
-\usepackage{mathtools} \mathtoolsset{showonlyrefs}
-\usepackage{bm} % greek no good in lualatex
-\usepackage{MnSymbol} % good-looking extended math symbols
-% \usepackage{lilyglyphs} % Extended music symbols (needs XeLaTex of LuaTex)
-\usepackage{dsfont} % for cool indicator
-\usepackage{textcomp} % because unicode and hyperref may have issues
-
+\KOMAoption{captions}{tableheading}
+\input{\string~/HeadRs/stathead.sty}
+\usepackage{mathfont}\setfont{Arial}
+\usepackage{framed}\renewenvironment{quote}{\colorlet{shadecolor}{orange!15}\begin{snugshade}}{\end{snugshade}}
+\usepackage{enumitem}\setlist[enumerate]{leftmargin=*}
+\usepackage{scrlayer-scrpage} % instead of fancyhdr
+\usepackage{setspace}\onehalfspacing
+\theoremstyle{remark}\newtheorem*{claim}{Claim}
+\allowdisplaybreaks
 \makeatletter
-\newcommand*{\indep}{%
-  \mathbin{%
-    \mathpalette{\@indep}{}%
-  }%
-}
-\newcommand*{\nindep}{%
-  \mathbin{%                   % The final symbol is a binary math operator
-    \mathpalette{\@indep}{\not}% \mathpalette helps for the adaptation
-                               % of the symbol to the different math styles.
-  }%
-}
-\newcommand*{\@indep}[2]{%
-  % #1: math style
-  % #2: empty or \not
-  \sbox0{$#1\perp\m@th$}%        box 0 contains \perp symbol
-  \sbox2{$#1=$}%                 box 2 for the height of =
-  \sbox4{$#1\vcenter{}$}%        box 4 for the height of the math axis
-  \rlap{\copy0}%                 first \perp
-  \dimen@=\dimexpr\ht2-\ht4-.2pt\relax
-      % The equals symbol is centered around the math axis.
-      % The following equations are used to calculate the
-      % right shift of the second \perp:
-      % [1] ht(equals) - ht(math_axis) = line_width + 0.5 gap
-      % [2] right_shift(second_perp) = line_width + gap
-      % The line width is approximated by the default line width of 0.4pt
-  \kern\dimen@
-  {#2}%
-      % {\not} in case of \nindep;
-      % the braces convert the relational symbol \not to an ordinary
-      % math object without additional horizontal spacing.
-  \kern\dimen@
-  \copy0 %                       second \perp
-}
 \makeatother
-
-% limits underneath
-\DeclareMathOperator*{\argminA}{arg\,min} % Jan Hlavacek
-\DeclareMathOperator*{\argminB}{argmin}   % Jan Hlavacek
-\DeclareMathOperator*{\argminC}{\arg\min}   % rbp
-\newcommand{\argminD}{\arg\!\min} % AlfC
-\newcommand{\argminE}{\mathop{\mathrm{argmin}}}          % ASdeL
-\newcommand{\argminF}{\mathop{\mathrm{argmin}}\limits}   % ASdeL
-
-\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
-
-\newcommand{\Prob}[2][]{ \mathbb{P}_{#1} \left\{ {#2} \right\}} % make a function for bb bold P with curly braces
-
-\newcommand{\E}[2][]{ \mathbb{E}_{#1}\left[ {#2} \right]} % make a function for expectation
-
-\newcommand{\Var}[2][]{ \mathrm{Var}_{#1}\left( {#2} \right)} % function for Var
-
-\newcommand{\Cov}[2][]{ \mathrm{Cov}_{#1}\left( {#2} \right)} % function for Covar
-
-\newcommand{\lik}[2][]{ \mathrm{lik}_{#1}\left( {#2} \right)} % function for lik
-
-\newcommand{\Ind}[2][]{\mathds{1}_{#1}\left[ {#2} \right]} % function for Indicator
-
-\DeclarePairedDelimiter\Abs{\lvert}{\rvert}
-
-\DeclarePairedDelimiter\dis{\lVert}{\rVert}
-
-% Swap the definition of \abs* and \norm*, so that \abs
-% and \norm resizes the size of the brackets, and the
-% starred version does not.
 \makeatletter
-\let\oldabs\abs
-\def\abs{\@ifstar{\oldabs}{\oldabs*}}
-
-\let\olddis\dis
-\def\dis{\@ifstar{\olddis}{\olddis*}}
 \makeatother
-
-% For typesetting the "distributed as" symbol
-% example of use:
-% X \distras{H_0} Y
 \makeatletter
-\newcommand{\distas}[1]{\mathbin{\overset{#1}{\kern\z@\sim}}}%
-\newsavebox{\mybox}\newsavebox{\mysim}
-\newcommand{\distras}[1]{%
-  \savebox{\mybox}{\hbox{\kern3pt$\scriptstyle#1$\kern3pt}}%
-  \savebox{\mysim}{\hbox{$\sim$}}%
-  \mathbin{\overset{#1}{\kern\z@\resizebox{\wd\mybox}{\ht\mysim}{$\sim$}}}%
-}
-\makeatother
-
-%---------------------------------------------------------------------------
-% Environment commands for Markdown
-%---------------------------------------------------------------------------
-\usepackage{pdflscape}
-\newcommand{\blandscape}{\begin{landscape}}
-\newcommand{\elandscape}{\end{landscape}}
-
-\newcommand{\bcenter}{\begin{center}}
-\newcommand{\ecenter}{\end{center}}
-
-\newcommand{\bsinglespace}{\begin{singlespace}}
-\newcommand{\esinglespace}{\end{singlespace}}
-
-\newcommand\startsupplement{%
-    \makeatletter
-       \setcounter{table}{0}
-       \renewcommand{\thetable}{S\arabic{table}}
-       \setcounter{figure}{0}
-       \renewcommand{\thefigure}{S\arabic{figure}}
-    \makeatother}
-
-%---------------------------------------------------------------------------
-% Bibliography
-%---------------------------------------------------------------------------
-% \usepackage[backend=bibtex]{biblatex}
-
-%---------------------------------------------------------------------------
-% Usage
-%---------------------------------------------------------------------------
-
-% For use in LaTex or Sweave:
-% \input{/Users/kevinchen/Documents/computing/HeadRs/StatHead.tex}
-
-% An example YAML header for Rmd
-% ---
-% title: "Stat 2"
-% author: "Kevin Chen"
-% date: \today
-% output:
-%   pdf_document:
-%      # keep_tex: true
-%     #  pandoc_args: [
-%     #   "-V", "classoption=twocolumn"
-%     # ]
-%      includes:
-%         in_header: /Users/kevinchen/Documents/computing/HeadRs/StatHead.tex
-% bibliography: /Users/kevinchen/Documents/2017 Fa/245/MV_FinalProj/mv_final.bib
-% csl: /Users/kevinchen/Documents/computing/HeadRs/AMA.csl
-% geometry: margin=2cm, bottom=2.5cm
-% ---
-
-
-%---------------------------------------------------------------------------
-% Fonts
-%---------------------------------------------------------------------------
-
-%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
-%\usepackage[utf8]{inputenc}
-% Latin Modern Roman
-% \usepackage{lmodern}
-%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
-
-\ifluatex
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% For Arial (with lualatex)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[no-math]{fontspec}
-% \setmainfont{Arial}[
-% % Options below necessary for Windows
-% 	% Extension = .ttf,
-% 	% UprightFont = *,
-% 	% BoldFont = *bd,
-% 	% ItalicFont = *i,
-% 	% BoldItalicFont = *bi
-% 	]
-% In YAML
-% ---
-% mainfont: Arial
-% ---
-% \usepackage{lualatex-math}
-
-% Math as text, but numerals do not mpa well becuase
-% mathastext clahes with unicode-math
-% \usepackage[italic]{mathastext}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
 \fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[many]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Risk of incident prostate cancer risk, weighted by survival to 1985},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Risk of incident prostate cancer risk, weighted by survival to
+1985}
 \usepackage{etoolbox}
 \makeatletter
 \providecommand{\subtitle}[1]{% add subtitle to \maketitle
   \apptocmd{\@title}{\par {\large #1 \par}}{}{}
 }
 \makeatother
-
-\title{Risk of incident prostate cancer risk, weighted by survival to 1985}
-\providecommand{\subtitle}[1]{}
 \subtitle{GM-UAW Cohort Study}
 \author{}
-\date{\vspace{-2.5em}\today}
+\date{\today}
 
 \begin{document}
 \maketitle
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, sharp corners, enhanced, breakable, interior hidden, frame hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand\arraystretch{1.1}
 \onehalfspacing
@@ -518,7 +213,26 @@ problem is not the focus of this analysis.)
 \begin{figure}
 \caption{Adapted from Figure 6c in Hernán et al. (2004). Take $L$, $E$, $C$, and $Y$ to represent underlying health, occupational exposure, censoring, and cancer incidence, respectively.}
 \centering
-\includegraphics{"/Users/kevinchen/eisen/GM/reports/left truncation/prostate cancer/resources/dag.pdf"}
+\fbox{
+\begin{tikzpicture}[>= stealth, auto,
+node distance = 2.5cm, semithick, scale=0.85,
+thick, fill=white, inner sep=5pt, outer sep=2pt]
+\tikzstyle{every state}=[
+shape = rectangle, align = center, draw = none
+]
+\node[state] (U_star) {$U^*$};
+\node[state] (L) [below of=U_star] {$L$};
+\node[state] (U) [below of=L]{$U$};
+\node[state] (E) [right of=L]{$E$};
+\node[state] (C) [right of=E, draw=black]{$C$};
+\node[state] (Y) [right of=C]{$Y$};
+\path[->] (U_star) edge (E);
+\path[->] (U_star) edge (C);
+\path[->] (U) edge (L);
+\path[->] (U) edge [bend right=5] (Y);
+\path[->] (L) edge [bend right=35] (C);
+\end{tikzpicture}
+}
 \end{figure}
 
 \hypertarget{workaround}{%
@@ -531,6 +245,7 @@ year \(t\), conditional on observed covariates \(X_t\) that may serve as
 instruments for unmeasured \(L\). We then used the modeled censoring
 probability \(g_i(C_t\mid X_t ,C_{t - 1} = 0)\) to construct stabilized
 weights \(sw_i\) for each individual in \(t = 1985\) where
+
 \[sw_i = \frac{1 - \frac{1}{n}\sum^n_i \mathbb \prod_t^{1984} g_i(C_{t}  = 0\mid X_{t} ,C_{(t - 1)} = 0)}{1 - \prod_t^{1984} g_i(C_{t}  = 0 \mid X_{t} ,C_{(t - 1)} = 0)}.\]
 
 The parameters of model \(g_i(C_t \mid X_t, C_{t - 1} = 0)\) were
@@ -607,6 +322,7 @@ Summary of population characteristics in the slides to follow.
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lrl}
   \toprule
 \multicolumn{3}{l}{Men still alive in 1973}\\% & center & spread \\ 
@@ -633,6 +349,7 @@ Study population size ($N$) & 20 996 & 100\% \\
   \hspace{10pt}Synthetic & 0.4 & (0.15, 1.27) \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{section-1}{%
@@ -640,6 +357,7 @@ Study population size ($N$) & 20 996 & 100\% \\
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lrl}
   \toprule
 \multicolumn{3}{l}{Men still alive in 1985}\\% & center & spread \\ 
@@ -666,6 +384,7 @@ Study population size ($N$) & 18 342 & 100\% \\
   \hspace{10pt}Synthetic & 0.39 & (0.15, 1.26) \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{section-2}{%
@@ -673,6 +392,7 @@ Study population size ($N$) & 18 342 & 100\% \\
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lrl}
   \toprule
 \multicolumn{3}{l}{Men still alive in 1985}\\% & center & spread \\ 
@@ -700,6 +420,7 @@ Study population size ($N$) & 18 342 & 100\% \\
   \hspace{10pt}Synthetic & 0.39 & (0.15, 1.26) \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{cox-ph-models}{%
@@ -732,6 +453,7 @@ Study population size ($N$) & 18 342 & 100\% \\
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lllll}
   \toprule
 Covariate & level & n & HR & (95\% CI) \\ 
@@ -756,6 +478,7 @@ Cumulative straight & 0 & 753 & 1.00 &  \\
   P-spline of year of hire (df = 13.67) &  & 1614 &  &  \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{section-4}{%
@@ -766,6 +489,7 @@ Cumulative straight & 0 & 753 & 1.00 &  \\
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lllll}
   \toprule
 Covariate & level & n & HR & (95\% CI) \\ 
@@ -790,6 +514,7 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
   P-spline of year of hire (df = 14.85) &  & 1480 &  &  \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{section-5}{%
@@ -802,6 +527,7 @@ being dead due to natural causes in
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lllll}
   \toprule
 Covariate & level & n & HR & (95\% CI) \\ 
@@ -826,6 +552,7 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
   P-spline of year of hire (df = 14.78) &  & 1480 &  &  \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{section-6}{%
@@ -838,6 +565,7 @@ truncation}\label{men-still-alive-in-1985-weighted-by-the-stabilized-inverse-pro
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lllll}
   \toprule
 Covariate & level & n & HR & (95\% CI) \\ 
@@ -862,6 +590,7 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
   P-spline of year of hire (df = 15.71) &  & 1480 &  &  \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \hypertarget{results-by-mwf-type}{%
@@ -869,6 +598,7 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lcccccccccccc}
   \toprule
 % & %% & %%% & %%%% & %%%%% & %%%%%% & %%%%%%% & %%%%%%%% & %%%%%%%%% & %%%%%%%%%% & %%%%%%%%%%% & %%%%%%%%%%%% & %%%%%%%%%%%%% \\ 
@@ -881,10 +611,12 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
   >1.33 &  & 287 & 1.08 &  & 273 & 1.11 &  & 273 & 1.10 &  & 273 & 1.23 \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lcccccccccccc}
   \toprule
 % & %% & %%% & %%%% & %%%%% & %%%%%% & %%%%%%% & %%%%%%%% & %%%%%%%%% & %%%%%%%%%% & %%%%%%%%%%% & %%%%%%%%%%%% & %%%%%%%%%%%%% \\ 
@@ -897,10 +629,12 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
   >13.3 &  & 484 & 1.29 &  & 448 & 1.25 &  & 448 & 1.24 &  & 448 & 1.80 \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \begin{table}[H]
 \centering
+::: {.cell layout-align="center"}
 \begin{tabular}{lcccccccccccc}
   \toprule
 % & %% & %%% & %%%% & %%%%% & %%%%%% & %%%%%%% & %%%%%%%% & %%%%%%%%% & %%%%%%%%%% & %%%%%%%%%%% & %%%%%%%%%%%% & %%%%%%%%%%%%% \\ 
@@ -913,13 +647,20 @@ Cumulative straight & 0 & 672 & 1.00 &  \\
   >1.05 &  & 173 & 1.07 &  & 159 & 1.05 &  & 159 & 1.05 &  & 159 & 0.71 \\ 
    \bottomrule
 \end{tabular}
+:::
 \end{table}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{refs}{}
-\leavevmode\hypertarget{ref-Hernan_2004}{}%
-1. Hernán MA, Hernández-Dı'az S, Robins JM. A structural approach to
-selection bias. \emph{Epidemiology}. 2004:615-625.
+\begin{CSLReferences}{0}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-Hernan_2004}{}}%
+\CSLLeftMargin{1. }%
+\CSLRightInline{Hernán MA, Hernández-Dı́az S, Robins JM. A structural
+approach to selection bias. \emph{Epidemiology}. 2004:615-625.}
+
+\end{CSLReferences}
+
+
 
 \end{document}

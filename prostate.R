@@ -10,13 +10,14 @@
 # 1. Run analyses in this dataset, starting in 1973.
 # 2. Run analyses in this dataset, starting in 1985 and excluding the workers who had prostate cancer in SEER before 1985.
 # 3. Run analyses in the original cancer dataset starting in 1985, but excluding workers who had prostate cancer in SEER before 1985 (so the plant 3 people are still misclassified)
-# 4. Repeat all analyses (including the original one), using inverse weights for probability of surviving to start of follow-up (1973 or 1985)
+# 4. Repeat all analyses (including the original one), using inverse weights based on probability of surviving to start of follow-up (1973 or 1985)
+# 4. Repeat all analyses (including the original one), using inverse weights based on probability of dying before start of follow-up (1973 or 1985)
 # 5. Compare all results.
 
 library(here)
 
 # Table 1 helper function
-source(here::here("reports/table1.R"))
+source(here::here("../gm-wrangling/wrangling/table1.R"))
 
 # Get analytic data ####
 if (!("exposure.lag" %in% ls())) {
@@ -30,12 +31,12 @@ if (
 	!('cohort_analytic' %in% ls())
 ) {
 	outcome.type <- 'incidence'
-	source(here::here('../gm-wrangling/wrangling', '05-Get-Exposure-Outcome.R'))
+	source(here::here('../gm-wrangling/wrangling', '00-hello.R'))
 	cohort_analytic <- get.cohort_analytic(
 		outcome_type = outcome.type,
 		exposure.lag = exposure.lag,
 		deathage.max = NULL,
-		end.year = end.year,
+		year.max = end.year,
 		hire.year.min = 1938,
 		use_seer = T
 	)
@@ -48,6 +49,11 @@ if (
 	
 	# PICK YOUT ####
 	cohort_analytic[, jobloss.date := yout]
+	
+	# Time off
+	cohort_analytic[,`:=`(off = off.gan + off.san + off.han)]
+	cohort_analytic[is.na(off), off := 0]
+	cohort_analytic[, cum_off := cumsum(off), by = .(studyno)]
 	
 	# Exposure after leaving work is 0
 	cohort_analytic[year > (year(jobloss.date) + exposure.lag), `:=`(
@@ -80,6 +86,8 @@ if (
 		"cum_soluble",
 		"synthetic",
 		"cum_synthetic",
+		"off",
+		"cum_off",
 		"year",
 		"yin.gm",
 		"yin",
@@ -107,8 +115,7 @@ if (
 	
 	# Drop unnecessary data ####
 	cohort_analytic <- cohort_analytic[
-		wh == 1 & nohist == 0 & immortal == 0 & right.censored == 0,
-		col.names, with = F]
+		wh == 1 & nohist == 0 & immortal == 0 & right.censored == 0,]
 }
 
 # Get no seer data ####
@@ -119,7 +126,7 @@ if (
 		outcome_type = outcome.type,
 		exposure.lag = exposure.lag,
 		deathage.max = NULL,
-		end.year = end.year,
+		year.max = end.year,
 		hire.year.min = 1938,
 		use_seer = F
 	)
@@ -127,11 +134,15 @@ if (
 	cohort_noseer[, `:=`(yin.gm = date.to.gm(yin))]
 	
 	# # Keep only people who appear in the exposure data
-	# cohort_noseer <-
-	# 	cohort_noseer[studyno %in% unique(exposure$studyno)]
+	# cohort_noseer <- cohort_noseer[studyno %in% unique(exposure$studyno)]
 	
 	# PICK YOUT ####
 	cohort_noseer[, jobloss.date := yout]
+	
+	# Time off
+	cohort_noseer[,`:=`(off = off.gan + off.san + off.han)]
+	cohort_noseer[is.na(off), off := 0]
+	cohort_noseer[, cum_off := cumsum(off), by = .(studyno)]
 	
 	# Exposure after leaving work is 0
 	cohort_noseer[year > (year(jobloss.date) + exposure.lag), `:=`(
@@ -152,8 +163,7 @@ if (
 	
 	# Drop unnecessary data ####
 	cohort_noseer <- cohort_noseer[
-		wh == 1 & nohist == 0 & immortal == 0 & right.censored == 0,
-		col.names, with = F]
+		wh == 1 & nohist == 0 & immortal == 0 & right.censored == 0,]
 }
 
 # Restrict cohort to those still alive at the start of 1973
@@ -164,12 +174,15 @@ cohort_prostate <- cohort_analytic[
 		(is.na(yod) | yod >= as.Date("1973-01-01")) &
 		(is.na(ddiag_pr) | ddiag_pr >= as.Date("1973-01-01")) &
 		yin < as.Date("1986-01-01") &
-		immortal == 0,]
+		immortal == 0,
+		col.names, with = F]
 
 
 # Get incidence key and other helpers
 cohort2 <- as.data.frame(matrix(ncol = length(col.names)))
+source(here::here("../gm-cancer-inc", "breaks.R"))
 source(here::here("../gm-cancer-inc", "incidence.R"))
+incidence.key <- fread(here::here("../gm-cancer-inc/resources", 'cancer-key-expanded.csv'))
 
 # Sort
 setorder(cohort_prostate, studyno, year)
@@ -178,11 +191,12 @@ cohort_prostate[plant != 3,`:=`(
 	N = .N
 ), by = .(studyno)]
 # Check Ns
+length(table(cohort_prostate[plant == 3]$studyno))
 length(table(cohort_prostate[plant != 3]$studyno))
 nrow(cohort_prostate[plant != 3 & year(ddiag_pr) >= 1973 & canc_pr == 1, ])
 nrow(cohort_prostate[canc_first == 1 & plant != 3])
 nrow(cohort_prostate[canc_first == 1 & (ddiag_first <= ddiag_pr | is.na(ddiag_pr)) & plant != 3])
-# Any cancer other than prosate
+# Any cancer other than prostate
 cohort_prostate[canc_first == 1 & (ddiag_first < ddiag_pr | is.na(ddiag_pr)) & plant != 3, .(
 	studyno,
 	year,
@@ -218,7 +232,7 @@ pr.dat[!is.na(yoi), `:=`(
 	yoi.gm = date.to.gm(yoi))]
 
 # Fewer age categories
-pr.dat <- pr.dat[Sex == "M"]
+pr.dat <- pr.dat[Sex == "Male"]
 pr.dat[,`:=`(Age = cut(age.year2/365.25,
 											 c(-Inf, 60, 70, 80, Inf) - 1))]
 
@@ -226,7 +240,7 @@ pr.dat[,`:=`(Age = cut(age.year2/365.25,
 pr.dat$Race %>% levels
 
 # Pretty Age cagetories
-pr.dat$Age %>% table
+pr.dat$Age %>% table(useNA = "always")
 pr.dat[, `:=`(Age = factor(
 	Age, levels = levels(Age), labels = {
 		# Get upper and lower bounds (delimited by comma)
@@ -282,7 +296,7 @@ overall.ggplot <- ggplot() +
 		x = year,
 		y = rate * 100000), size = 0.5) +
 	labs(x = "Calendar year",
-			 y = "Incidence (per 100,000 p$\\cdot$years)") +
+			 y = "Incidence (per $10^5$ p$\\cdot$years)") +
 	geom_rug(data = pr.dat[status == 1], aes(
 		x = yoi.gm
 	), size = 0.01) +
@@ -296,7 +310,7 @@ by_age.ggplot <- ggplot() +
 	# geom_smooth(se = T, span = 0.6, size = 0.2, alpha = 0.2) +
 	# facet_wrap(. ~ Age, ncol = 2) +
 	labs(x = "Calendar year",
-			 y = "Incidence (per 100,000 p$\\cdot$years)") +
+			 y = "Incidence (per $10^5$ p$\\cdot$years)") +
 	geom_rug(data = pr.dat[status == 1], aes(
 		x = yoi.gm
 	), size = 0.01) +
@@ -305,19 +319,19 @@ by_age.ggplot <- ggplot() +
 		legend.margin = margin()
 	) + guides(color = guide_legend(nrow = 2))
 
-# # Render
-# tikz(here::here(paste0("/Users/kevinchen/eisen/GM/left truncation/resources", "FU from ", min(pr.dat$year)), "prostate-cancer_all-ages.tex"),
-# 		 standAlone = T, height = 2, width = 3)
-# print(overall.ggplot)
-# dev.off()
-#
-# tikz(here::here(paste0("/Users/kevinchen/eisen/GM/left truncation/resources", "FU from ", min(pr.dat$year)), "prostate-cancer_by-age.tex"),
-# 		 standAlone = T, height = 2.5, width = 3)
-# print(by_age.ggplot)
-# dev.off()
-#
-# # Compile
-# lualatex(directory = here::here(paste0("/Users/kevinchen/eisen/GM/left truncation/resources", "FU from ", min(pr.dat$year))))
+# Render
+tikz(here::here(paste0("resources/prostate cancer/", "FU from ", min(pr.dat$year)), "prostate-cancer_all-ages.tex"),
+		 standAlone = T, height = 2, width = 3)
+print(overall.ggplot)
+dev.off()
+
+tikz(here::here(paste0("resources/prostate cancer/", "FU from ", min(pr.dat$year)), "prostate-cancer_by-age.tex"),
+		 standAlone = T, height = 2.5, width = 3)
+print(by_age.ggplot)
+dev.off()
+
+# Compile
+lualatex(directory = here::here(paste0("resources/prostate cancer", "FU from ", min(pr.dat$year))))
 
 # Model 1: Plants 2 and 3 ####
 # Run analyses in this dataset, just like I did for the original cancer cohort but starting in 1973.
@@ -327,91 +341,92 @@ pr1.dat[,`:=`(
 	Plant = relevel(factor(Plant), "1")
 )]
 
-# tmp.coxph <- coxph(
-# 	Surv(age.year1, age.year2, status) ~
-# 		`Cumulative straight` +
-# 		`Cumulative soluble 5` +
-# 		`Cumulative synthetic` +
-# 		pspline(year, df = 0)  +
-# 		pspline(yin.gm, df = 0) +
-# 		Race + Plant,
-# 	data = pr1.dat,
-# 	method = "efron")
-#
-# # Save model  ####
-# saveRDS(tmp.coxph,
-# 				file = paste0(
-# 					to_drive_D(here::here('left truncation/resources/')),
-# 					"pr_mod1.coxph.rds"
-# 				))
-#
-# get.coef(outcomes = which(incidence.key$code == "pr"),
-# 				 cohort_name = "cohort_prostate",
-# 				 analytic.name = "pr1.dat",
-# 				 new_dat = F,
-# 				 messy_sol = NULL,
-# 				 mod.directory = to_drive_D(here::here('left truncation/resources/')),
-# 				 mod.name = "pr_mod1.coxph.rds",
-# 				 directory = here::here('reports/left truncation/prostate cancer/resources/'),
-# 				 file.prefix = "pr_mod1")
-#
-# # Descriptive table
-# source(here::here("reports", "table1.R"))
-# popchar1.tab1 <- get.tab1(df = pr1.dat, exposure_lag = 20, incidence = T)
-# saveRDS(popchar1.tab1,
-# 				file = here::here(
-# 					'left truncation/resources/', "popchar1.tab1.rds"))
+tmp.coxph <- coxph(
+	Surv(age.year1, age.year2, status) ~
+		`Cumulative straight` +
+		`Cumulative soluble 5` +
+		`Cumulative synthetic` +
+		pspline(year, df = 0)  +
+		pspline(yin.gm, df = 0) +
+		Race + Plant,
+	data = pr1.dat,
+	method = "efron")
+
+# Save model  ####
+saveRDS(tmp.coxph,
+				file = here::here('resources/prostate cancer',
+				                  "pr_mod1.coxph.rds"
+				))
+
+get.coef(outcomes = which(incidence.key$code == "pr"),
+				 cohort_name = "cohort_prostate",
+				 analytic.name = "pr1.dat",
+				 new_dat = F,
+				 messy_sol = NULL,
+				 mod.directory = here::here('resources/prostate cancer'),
+				 mod.name = "pr_mod1.coxph.rds",
+				 directory = here::here('reports/prostate cancer/resources'),
+				 file.prefix = "pr_mod1")
+
+# Descriptive table
+pr1.dat[, `:=`(
+  yob.gm = date.to.gm(yob),
+  py = (age.year2 - age.year1)/365.25)]
+source(here::here("../gm-wrangling/wrangling", "table1.R"))
+popchar1.tab1 <- get.tab1(df = pr1.dat, exposure_lag = 20, incidence = T,
+                          table_engine = 'pander')
+saveRDS(popchar1.tab1,
+				file = here::here('reports/prostate cancer/resources', "popchar1.tab1.rds"))
 
 # Model 2: Start in 1985, exclude those with prostate cancer ####
 # Run analyses in this dataset starting in 1985, excluding the workers who had prostate cancer in SEER before 1985.
 length(table(pr.dat[,][yoi < as.Date("1985-01-01"), studyno]))
-pr2.dat <- as.data.table(as.data.frame(pr.dat[(is.na(yoi) | yoi >= as.Date("1985-01-01")) &
-																								year >= 1985,]))
+pr2.dat <- copy(pr.dat[
+  (is.na(yoi) | yoi >= as.Date("1985-01-01")) & year >= 1985,])
 
 pr2.dat[,`:=`(
 	Race = relevel(factor(Race), "White"),
 	Plant = relevel(factor(Plant), "1")
 )]
 
-# tmp.coxph <- coxph(
-# 	Surv(age.year1, age.year2, status) ~
-# 		`Cumulative straight` +
-# 		`Cumulative soluble 5` +
-# 		`Cumulative synthetic` +
-# 		pspline(year, df = 0)  +
-# 		pspline(yin.gm, df = 0) +
-# 		Race + Plant,
-# 	data = pr2.dat,
-# 	method = "efron")
-#
-# # Save model  ####
-# saveRDS(tmp.coxph,
-# 				file = paste0(
-# 					to_drive_D(here::here('left truncation/resources/')),
-# 					"pr_mod2.coxph.rds"
-# 				))
-#
-# get.coef(outcomes = which(incidence.key$code == "pr"),
-# 				 cohort_name = "cohort_prostate",
-# 				 analytic.name = "pr2.dat",
-# 				 new_dat = F,
-# 				 messy_sol = NULL,
-# 				 mod.directory = to_drive_D(here::here('left truncation/resources/')),
-# 				 mod.name = "pr_mod2.coxph.rds",
-# 				 directory = here::here('reports/left truncation/prostate cancer/resources/'),
-# 				 file.prefix = "pr_mod2")
-#
-# # Descriptive table
-# popchar2.tab1 <- get.tab1(df = pr2.dat, exposure_lag = 20, incidence = T)
-# saveRDS(popchar2.tab1,
-# 				file = here::here('left truncation/resources/',
-# 													"popchar2.tab1.rds"))
+tmp.coxph <- coxph(
+	Surv(age.year1, age.year2, status) ~
+		`Cumulative straight` +
+		`Cumulative soluble 5` +
+		`Cumulative synthetic` +
+		pspline(year, df = 0)  +
+		pspline(yin.gm, df = 0) +
+		Race + Plant,
+	data = pr2.dat,
+	method = "efron")
+
+# Save model  ####
+saveRDS(tmp.coxph,
+				file = here::here('resources/prostate cancer', "pr_mod2.coxph.rds"))
+
+get.coef(outcomes = which(incidence.key$code == "pr"),
+				 cohort_name = "cohort_prostate",
+				 analytic.name = "pr2.dat",
+				 new_dat = F,
+				 messy_sol = NULL,
+				 mod.directory = here::here('resources/prostate cancer'),
+				 mod.name = "pr_mod2.coxph.rds",
+				 directory = here::here('reports/prostate cancer/resources'),
+				 file.prefix = "pr_mod2")
+
+# Descriptive table
+pr2.dat[, `:=`(
+  yob.gm = date.to.gm(yob),
+  py = (age.year2 - age.year1)/365.25)]
+popchar2.tab1 <- get.tab1(df = pr2.dat, exposure_lag = 20, incidence = T)
+saveRDS(popchar2.tab1,
+				file = here::here('reports/prostate cancer/resources',"popchar2.tab1.rds"))
 
 
 # Model 3 ####
 # Run analyses starting in 1985, but excluding workers who had prostate cancer in SEER before 1985 WITH WEIGHTS
 length(table(pr2.dat[,][yoi < as.Date("1985-01-01"), studyno]))
-pr3.dat <- as.data.table(as.data.frame(pr2.dat))
+pr3.dat <- copy(pr2.dat)
 
 # Get weights
 weights.year.min <- 1941
@@ -427,47 +442,46 @@ pr3.dat <- merge(pr3.dat,
 								 survival_to_85[dead_by_85 == 0, .(
 								 	studyno,
 								 	p = big.gam.prob)],
-								 on = "studyno",
+								 by = "studyno",
 								 all.x = T)
 
 # If hired in 1985, go ahead and give them full weight
 pr3.dat[is.na(p) & year(yin) + 3 > 1985, p := 1]
 
-# tmp.coxph <- coxph(
-# 	Surv(age.year1, age.year2, status) ~
-# 		`Cumulative straight` +
-# 		`Cumulative soluble 5` +
-# 		`Cumulative synthetic` +
-# 		pspline(year, df = 0)  +
-# 		pspline(yin.gm, df = 0) +
-# 		Race + Plant,
-# 	weights = p,
-# 	cluster = studyno,
-# 	data = pr3.dat,
-# 	method = "efron")
-#
-# # Save model  ####
-# saveRDS(tmp.coxph,
-# 				file = paste0(
-# 					to_drive_D(here::here('left truncation/resources/')),
-# 					"pr_mod3.coxph.rds"
-# 				))
-#
-# get.coef(outcomes = which(incidence.key$code == "pr"),
-# 				 cohort_name = "cohort_prostate",
-# 				 analytic.name = "pr3.dat",
-# 				 new_dat = F,
-# 				 messy_sol = NULL,
-# 				 mod.directory = to_drive_D(here::here('left truncation/resources/')),
-# 				 mod.name = "pr_mod3.coxph.rds",
-# 				 directory = here::here('reports/left truncation/prostate cancer/resources/'),
-# 				 file.prefix = "pr_mod3")
+tmp.coxph <- coxph(
+	Surv(age.year1, age.year2, status) ~
+		`Cumulative straight` +
+		`Cumulative soluble 5` +
+		`Cumulative synthetic` +
+		pspline(year, df = 0)  +
+		pspline(yin.gm, df = 0) +
+		Race + Plant,
+	weights = p,
+	cluster = studyno,
+	data = pr3.dat,
+	method = "efron")
+
+# Save model  ####
+saveRDS(tmp.coxph,
+				file = here::here('resources/prostate cancer', "pr_mod3.coxph.rds"))
+
+get.coef(outcomes = which(incidence.key$code == "pr"),
+				 cohort_name = "cohort_prostate",
+				 analytic.name = "pr3.dat",
+				 new_dat = F,
+				 messy_sol = NULL,
+				 mod.directory = here::here('resources/prostate cancer'),
+				 mod.name = "pr_mod3.coxph.rds",
+				 directory = here::here('reports/prostate cancer/resources'),
+				 file.prefix = "pr_mod3")
 
 # Descriptive table
+pr3.dat[, `:=`(
+  yob.gm = date.to.gm(yob),
+  py = (age.year2 - age.year1)/365.25)]
 popchar3.tab1 <- get.tab1(df = pr3.dat, exposure_lag = 20, incidence = T)
 saveRDS(popchar3.tab1,
-				file = here::here('left truncation/resources/',
-													"popchar3.tab1.rds"))
+				file = here::here('reports/prostate cancer/resources', "popchar3.tab1.rds"))
 
 # Model 4 ####
 # Run analyses starting in 1985, but excluding workers who had prostate cancer in SEER before 1985 WITH STABILIZED WEIGHTS
@@ -508,37 +522,35 @@ pr3.dat[, .(
 	# coord_cartesian(xlim = c(0, 60)) +
 	mytheme.web
 
-# tmp.coxph <- coxph(
-# 	Surv(age.year1, age.year2, status) ~
-# 		`Cumulative straight` +
-# 		`Cumulative soluble 5` +
-# 		`Cumulative synthetic` +
-# 		pspline(year, df = 0)  +
-# 		pspline(yin.gm, df = 0) +
-# 		Race + Plant,
-# 	weights = sw,
-# 	cluster = studyno,
-# 	data = pr3.dat,
-# 	method = "efron")
-#
-# summary(tmp.coxph)
-#
-# # Save model  ####
-# saveRDS(tmp.coxph,
-# 				file = paste0(
-# 					to_drive_D(here::here('left truncation/resources/')),
-# 					"pr_mod4.coxph.rds"
-# 				))
-#
-# get.coef(outcomes = which(incidence.key$code == "pr"),
-# 				 cohort_name = "cohort_prostate",
-# 				 analytic.name = "pr3.dat",
-# 				 new_dat = F,
-# 				 messy_sol = NULL,
-# 				 mod.directory = to_drive_D(here::here('left truncation/resources/')),
-# 				 mod.name = "pr_mod4.coxph.rds",
-# 				 directory = here::here('reports/left truncation/prostate cancer/resources/'),
-# 				 file.prefix = "pr_mod4")
+tmp.coxph <- coxph(
+	Surv(age.year1, age.year2, status) ~
+		`Cumulative straight` +
+		`Cumulative soluble 5` +
+		`Cumulative synthetic` +
+		pspline(year, df = 0)  +
+		pspline(yin.gm, df = 0) +
+		Race + Plant,
+	weights = sw,
+	cluster = studyno,
+	data = pr3.dat,
+	method = "efron")
+
+summary(tmp.coxph)
+
+# Save model  ####
+saveRDS(tmp.coxph,
+				file = here::here('resources/prostate cancer', "pr_mod4.coxph.rds"
+				))
+
+get.coef(outcomes = which(incidence.key$code == "pr"),
+				 cohort_name = "cohort_prostate",
+				 analytic.name = "pr3.dat",
+				 new_dat = F,
+				 messy_sol = NULL,
+				 mod.directory = here::here('resources/prostate cancer'),
+				 mod.name = "pr_mod4.coxph.rds",
+				 directory = here::here('reports/prostate cancer/resources'),
+				 file.prefix = "pr_mod4")
 
 # Model 5 ####
 # Run analyses starting in 1985, but excluding workers who had prostate cancer in SEER before 1985 with inverse prob of being ALIVE
@@ -547,38 +559,38 @@ pr3.dat[,`:=`(
 	alive.sw = overall.p/(p)
 ), by = .(studyno)]
 
-ggplot(pr3.dat[, .(sw = alive.sw[1]), by = studyno], aes(x = sw)) + geom_histogram() + mytheme.web
+ggplot(pr3.dat[, .(sw = alive.sw[1]), by = studyno], aes(x = sw)) +
+  geom_histogram() +
+  mytheme.web
 
 pr3.dat[,`:=`(
 	sw = c(sw[1], rep(1, .N - 1))
 ), by = .(studyno)]
 
-# tmp.coxph <- coxph(
-# 	Surv(age.year1, age.year2, status) ~
-# 		`Cumulative straight` +
-# 		`Cumulative soluble 5` +
-# 		`Cumulative synthetic` +
-# 		pspline(year, df = 0)  +
-# 		pspline(yin.gm, df = 0) +
-# 		Race + Plant,
-# 	weights = sw,
-# 	cluster = studyno,
-# 	data = pr3.dat,
-# 	method = "efron")
-#
-# # Save model  ####
-# saveRDS(tmp.coxph,
-# 				file = paste0(
-# 					to_drive_D(here::here('left truncation/resources/')),
-# 					"pr_mod5.coxph.rds"
-# 				))
-#
-# get.coef(outcomes = which(incidence.key$code == "pr"),
-# 				 cohort_name = "cohort_prostate",
-# 				 analytic.name = "pr3.dat",
-# 				 new_dat = F,
-# 				 messy_sol = NULL,
-# 				 mod.directory = to_drive_D(here::here('left truncation/resources/')),
-# 				 mod.name = "pr_mod5.coxph.rds",
-# 				 directory = here::here('reports/left truncation/prostate cancer/resources/'),
-# 				 file.prefix = "pr_mod5")
+tmp.coxph <- coxph(
+	Surv(age.year1, age.year2, status) ~
+		`Cumulative straight` +
+		`Cumulative soluble 5` +
+		`Cumulative synthetic` +
+		pspline(year, df = 0)  +
+		pspline(yin.gm, df = 0) +
+		Race + Plant,
+	weights = sw,
+	cluster = studyno,
+	data = pr3.dat,
+	method = "efron")
+
+# Save model  ####
+saveRDS(tmp.coxph,
+				file = here::here('resources/prostate cancer', "pr_mod5.coxph.rds"))
+
+get.coef(outcomes = which(incidence.key$code == "pr"),
+				 cohort_name = "cohort_prostate",
+				 analytic.name = "pr3.dat",
+				 new_dat = F,
+				 messy_sol = NULL,
+				 mod.directory = here::here('resources/prostate cancer'),
+				 mod.name = "pr_mod5.coxph.rds",
+				 directory = here::here('reports/prostate cancer/resources'),
+				 file.prefix = "pr_mod5")
+

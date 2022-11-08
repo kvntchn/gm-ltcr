@@ -107,21 +107,21 @@ Lrnr_gam$private_methods$.predict <- function (task) {
 # Run sl3 for both sets of cutpoints ####
 for (i in length(probs)) { # loop over the different sets of cutpoints
 	is.deciles <- length(table(sapply(c(probs[[i]], deciles = list(seq(0, 1, 0.1))), length))) == 1
-	
+
 	# Choose covariates
 	X <- X.names
 	if (is.deciles) {
 		X <- sapply(X, function(x) {
 			if (x %in% new_cat.cols) {paste0(x, "_deciles")} else {x}}, USE.NAMES = F)
 	}
-	
+
 	if (run_sl3) {
 		# Instantiate task
 		task <- make_sl3_Task(as.data.frame(cohort_select),
 													covariates = X,
 													outcome = "y",
 													outcome_type = "binomial")
-		
+
 		# Instantiate learners
 		sapply(sl.library[-1], function(x = "rpart") {
 			assign(paste0("lrnr_", x),
@@ -133,7 +133,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 						 },
 						 envir = .GlobalEnv)
 		})
-		
+
 		# # Run and check system time
 		# sapply(sl.library[-1], function(x) {
 		# 	system.time(
@@ -142,7 +142,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# 				 envir = .GlobalEnv),
 		# 	F)
 		# })
-		
+
 		# No screening for now, just stacking
 		stack <- make_learner(Stack,
 													sapply(sl.library[-1], function(x) {
@@ -153,7 +153,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# Save stack results
 		saveRDS(stack_preds, file = here::here(
 			"resources/sl", paste0("stack_preds", ifelse(is.deciles, "_by-deciles", ""), ".rds")))
-		
+
 		# Cross-validation
 		cv_stack <- Lrnr_cv$new(stack)
 		cv_fit <- cv_stack$train(task)
@@ -164,12 +164,12 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		cv_risks <- cv_fit$cv_risk(loss_squared_error)
 		saveRDS(cv_risks, file = here::here(
 			"resources/sl", paste0("cv_risks", ifelse(is.deciles, "_by-deciles", ""), ".rds")))
-		
+
 		# Super Learner
 		metalearner <- make_learner(Lrnr_nnls)
 		cv_task <- cv_fit$chain(task)
 		ml_fit <- metalearner$train(cv_task)
-		
+
 		sl_pipeline <- make_learner(Pipeline, stack_fit, ml_fit)
 		sl_weights <- sl_pipeline$learner_fits
 		# Save learner fits #
@@ -179,12 +179,12 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# Save sl results #
 		saveRDS(sl_preds, file = here::here(
 			"resources/sl", paste0("sl_preds", ifelse(is.deciles, "_by-deciles", ""), ".rds")))
-		
+
 		sl.predict <- data.table(
 			sl = sl_preds,
 			sapply(stack_preds, function(x) {x})
 		)
-		
+
 		# # Basic implementation ####
 		# # Set up parallel computation - no windows
 		# num_cores <- RhpcBLASctl::get_num_cores()
@@ -201,7 +201,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# # # Save SuperLearner results ####
 		# # saveRDS(sl, file = to_drive_D(here::here("resources/sl", "sl.rds")))
 		# # sl <- readRDS(file = to_drive_D(here::here("resources/sl", "sl.rds")))
-		# 
+		#
 		# # Get predictions
 		# sl.predict <- as.data.table(
 		# 	cbind(studyno = cohort_select$studyno,
@@ -209,7 +209,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# 	sl$library.predict)
 		# 	)
 		# names(sl.predict) <- gsub("2_All$|^SL.", "", names(sl.predict))
-		
+
 		# Save SL fitted values to Box
 		box_save(sl.predict,
 						 dir_id = 117568282871,
@@ -224,7 +224,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		cv_risks <- readRDS(file = here::here("resources/sl", paste0("cv_risks", ifelse(is.deciles, "_by-deciles", ""), ".rds")))
 		sl.predict <- box_read(ifelse(is.deciles, 696590655167, 691257036647))
 	}
-	
+
 	# Probability of being alive ####
 	# (1 - Pr(subject died at t = 1)) * (1 - Pr(subject died at t = 2)) * ... * (1 - Pr(subject died at t = t))
 	# Fitted values
@@ -242,7 +242,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		N = .N,
 		mortality = as.numeric(max(y) > 0)),
 		by = .(studyno)]
-	
+
 	# Individual-specific
 	prob.tab <- cohort_select[I == N, sapply(c(
 		"studyno", "year",
@@ -259,7 +259,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		paste0(x, "_deciles")} else {x}
 		}), with = F]
 	names(prob.tab) <- gsub(" exposure| deciles", "", gsub("_", " ", names(prob.tab)))
-	
+
 	# Probabilities by stratum ####
 	for (covariate in c("Age", "Employment status", "Race", "Sex", "Year of hire",
 											paste("Cumulative", c("straight", "soluble", "synthetic")))) {
@@ -281,7 +281,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 					 tmp.tab, envir = .GlobalEnv)
 		print(tmp.tab)
 	}
-	
+
 	# ROC ####
 	library(pROC)
 	for (method in sl.library) {
@@ -289,7 +289,7 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 					 roc(prob.tab[,.(mortality, p = 1 - get(paste0(method, ".prob")))],
 					 		mortality, p, ci = T))
 	}
-	
+
 	# Plot
 	roc.ggtab <- rbindlist(lapply(sl.library, function (method) {
 		data.frame(
@@ -299,31 +299,31 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 			threshold = get(paste0(method, ".roc"))$thresholds,
 			method = paste(method))
 	}))
-	
+
 	setDT(roc.ggtab)
-	
+
 	roc.ggtab[,`:=`(AUC = factor(AUC, sort(as.numeric(unique(AUC)), T)))]
 	pair <- roc.ggtab[,.(AUC = paste0(AUC[1])), by = .(method)][order(AUC),]
-	
+
 	roc.ggtab[,`:=`(
 		method = factor(method, pair$method),
 		AUC = factor(method, pair$method, pair$AUC)
 	)]
-	
+
 	box_save(
 		roc.ggtab,
 		dir_id = 117612329554,
 		file_name = paste0("roc", ifelse(is.deciles, "_by-deciles", ""), ".rdata"),
 		description = "ROC results by method"
 	)
-	
+
 	box_write(
 		roc.ggtab,
 		dir_id = 117612329554,
 		file_name = paste0("roc", ifelse(is.deciles, "_by-deciles", ""), ".csv"),
 		description = "ROC results by method"
 	)
-	
+
 	roc.threshold <- roc.ggtab[, .(
 		threshold.min = min(threshold[is.finite(threshold)]),
 		threshold.Q2 = quantile(threshold[is.finite(threshold)], 0.25),
@@ -331,16 +331,16 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		threshold.Q3 = quantile(threshold[is.finite(threshold)], 0.75),
 		threshold.max = max(threshold[is.finite(threshold)])
 	), by = .(method)]
-	
+
 	saveRDS(roc.threshold, file = here::here("resources/roc", paste0("roc.threshold", ifelse(is.deciles, "_by-deciles", ""), ".rds")))
-	
+
 	# Thin out number of lines for ggplot
 	n_i <- 40
 	roc.ggtab[,`:=`(I = c(
 		rep(1:n_i, .N %/% n_i),
 		seq(1, length.out = .N - .N %/% n_i * n_i))
 	), by = .(method)]
-	
+
 	roc.ggtab[I == 1 | method == "mean"] %>% ggplot(aes(
 		x = Specificity, y = Sensitivity, color = method
 	)) + geom_step(size = 0.5) +
@@ -356,12 +356,12 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		theme(
 			legend.box = "horizontal"
 		) -> roc.ggplot
-	
-	
+
+
 	roc.sort <- sort(sapply(sl.library, function(method) {
 		get(paste0(method, ".roc"))$auc}))
 	roc.sort
-	
+
 	# Compile plot
 	library(tikzDevice)
 	# quartz(height = 3, width = 5)
@@ -369,11 +369,11 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 			 height = 3, width = 5, standAlone = T)
 	roc.ggplot
 	dev.off()
-	
+
 	lualatex(pattern = paste0("^sl\\.roc", ifelse(is.deciles, "_by-deciles", ""), "\\.tex"),
 					 directory = here::here("reports/survival to 1985/resources"),
 					 break_after = 120)
-	
+
 	# Look at the weights ####
 	weight.ggtab <- melt(prob.tab,
 											 id.vars = 1,
@@ -382,9 +382,9 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 											 	method = substr(variable, 1,  unlist(gregexpr("\\.", variable)) - 1),
 											 	p = value
 											 )]
-	
+
 	weight.ggtab[,`:=`(method = factor(factor(method), levels = names(roc.sort)))]
-	
+
 	weight.ggtab %>% group_by(method) %>%
 		mutate(p.mean = mean(p)) %>%
 		mutate(weight = (1 - p.mean)/(1 - p)) %>%
@@ -398,17 +398,17 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# geom_density(color = "red") +
 		# coord_cartesian(xlim = c(0, 100)) +
 		facet_wrap(. ~ method, scales = "free") + mytheme -> weight.ggplot
-	
+
 	# quartz(height = 4, width = 5)
 	tikz(file = here::here("reports/survival to 1985/resources", paste0("weights", ifelse(is.deciles, "_by-deciles", ""), ".tex")),
 			 height = 4, width = 5, standAlone = T)
 	weight.ggplot
 	dev.off()
-	
+
 	lualatex(pattern = paste0("weights", ifelse(is.deciles, "_by-deciles", ""), "\\.tex"),
 					 directory = here::here("reports/survival to 1985/resources"),
 					 break_after = 120)
-	
+
 	weight.ggtab %>% group_by(method) %>% mutate(
 		p = ifelse(p > quantile(p, 0.95), quantile(p, 0.95), p)
 	) %>% ggplot(aes(
@@ -419,15 +419,15 @@ for (i in length(probs)) { # loop over the different sets of cutpoints
 		# geom_density(color = "red") +
 		# coord_cartesian(xlim = c(0, 100)) +
 		facet_wrap(. ~ method, scales = "free") + mytheme -> prob.ggplot
-	
+
 	# quartz(height = 4, width = 5)
 	tikz(file = here::here("reports/survival to 1985/resources", paste0("probs", ifelse(is.deciles, "_by-deciles", ""), ".tex")),
 			 height = 4, width = 5, standAlone = T)
 	prob.ggplot
 	dev.off()
-	
+
 	lualatex(pattern = paste0("probs", ifelse(is.deciles, "_by-deciles", ""), "\\.tex"),
 					 directory = here::here("reports/survival to 1985/resources"),
 					 break_after = 120)
-	
+
 } # End loop over different cutpoints
